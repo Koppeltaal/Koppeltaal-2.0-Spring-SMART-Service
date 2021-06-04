@@ -1,0 +1,5 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  nl.koppeltaal.spring.boot.starter.smartservice.configuration.SmartServiceConfiguration,\
+  nl.koppeltaal.spring.boot.starter.smartservice.service.fhir.FhirCapabilitiesService, \
+  nl.koppeltaal.spring.boot.starter.smartservice.service.fhir.SmartClientCredentialService, \
+  nl.koppeltaal.spring.boot.starter.smartservice.service.jwt.JwtValidationService
