@@ -87,4 +87,12 @@
     </repository>
   </repositories>
 
+  <distributionManagement>
+    <repository>
+      <id>github</id>
+      <name>GitHub Koppeltaal Apache Maven Packages</name>
+      <url>https://maven.pkg.github.com/Koppeltaal/Koppeltaal-2.0-Spring-JWKS</url>
+    </repository>
+  </distributionManagement>
+
 </project>
