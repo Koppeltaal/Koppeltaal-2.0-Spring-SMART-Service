@@ -30,8 +30,8 @@
     <server>
       <id>github</id>
       <!--   CONFIGURED @ GITHUB ORGANIZATION SECRETS   -->
-      <username>${env.SETTINGS_XML_USERNAME}</username>
-      <password>${env.SETTINGS_XML_PASSWORD}</password>
+      <username>${SETTINGS_XML_USERNAME}</username>
+      <password>${SETTINGS_XML_PASSWORD}</password>
     </server>
   </servers>
 </settings>
