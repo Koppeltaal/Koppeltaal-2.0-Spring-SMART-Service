@@ -80,7 +80,7 @@
     </repository>
     <repository>
       <id>github</id>
-      <url>https://maven.pkg.github.com/Koppeltaal/*</url>
+      <url>https://maven.pkg.github.com/koppeltaal/*</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
