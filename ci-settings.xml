@@ -17,7 +17,7 @@
         </repository>
         <repository>
           <id>github</id>
-          <url>https://maven.pkg.github.com/koppeltaal/*</url>
+          <url>https://maven.pkg.github.com/koppeltaal/Koppeltaal-2.0-Spring-JWKS</url>
           <snapshots>
             <enabled>true</enabled>
           </snapshots>
