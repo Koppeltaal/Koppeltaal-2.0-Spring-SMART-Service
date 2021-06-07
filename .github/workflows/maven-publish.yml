@@ -4,6 +4,9 @@
 name: Maven Package
 
 on:
+  push:
+    branches:
+      - master
   release:
     types: [created]
 
@@ -31,13 +34,13 @@ jobs:
     - name: Print settings.xml
       run: cat settings.xml
 
-    - name: Print $GITHUB_WORKSPACE/settings.xml
-      run: cat $GITHUB_WORKSPACE/settings.xml
+    - name: Print $GITHUB_WORKSPACE/ci-settings.xml
+      run: cat $GITHUB_WORKSPACE/ci-settings.xml
 
     - name: Build with Maven
-      run: mvn -B package --file pom.xml --settings settings.xml --debug
+      run: mvn -B package --file pom.xml --settings $GITHUB_WORKSPACE/ci-settings.xml
 
     - name: Publish to GitHub Packages Apache Maven
-      run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
+      run: mvn deploy -s $GITHUB_WORKSPACE/ci-settings.xml
       env:
         GITHUB_TOKEN: ${{ github.token }}
