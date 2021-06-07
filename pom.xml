@@ -73,25 +73,11 @@
     </dependency>
   </dependencies>
 
-  <repositories>
-    <repository>
-      <id>central</id>
-      <url>https://repo1.maven.org/maven2</url>
-    </repository>
-    <repository>
-      <id>github</id>
-      <url>https://maven.pkg.github.com/koppeltaal/*</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-
   <distributionManagement>
     <repository>
       <id>github</id>
       <name>GitHub Koppeltaal Apache Maven Packages</name>
-      <url>https://maven.pkg.github.com/Koppeltaal/Koppeltaal-2.0-Spring-JWKS</url>
+      <url>https://maven.pkg.github.com/Koppeltaal/Koppeltaal-2.0-Spring-SMART-Service</url>
     </repository>
   </distributionManagement>
 
