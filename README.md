@@ -8,6 +8,7 @@ This adds the following functionality:
   and refreshes it when needed
 * A `JwtValidationService` that verifies if the JWT auth  token is still valid. 
   If not, it will refresh
+*  Resource services that bidirectionally manage data fom the FHIR store via `DTO` objects  
   
 The above will be achieved by simply adding configuring the `application.properties`.
 To get the `access_token`, use `SmartClientCredentialService.getAccessToken()`
