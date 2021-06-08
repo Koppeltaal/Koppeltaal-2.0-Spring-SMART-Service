@@ -19,55 +19,21 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "fhir.smart.service")
 @ConditionalOnClass(JwksConfiguration.class)
 public class SmartServiceConfiguration {
-//	String fhirServerUrl;
-//	String clientId;
-//	String scope;
-//
-//	@Bean
-//	public FhirContext fhirContext() {
-//		return FhirContext.forR4();
-//	}
-//
-//	public String getFhirServerUrl() {
-//		return fhirServerUrl;
-//	}
-//
-//	public void setFhirServerUrl(String fhirServerUrl) {
-//		this.fhirServerUrl = fhirServerUrl;
-//	}
-//
-//	public String getClientId() {
-//		return clientId;
-//	}
-//
-//	public void setClientId(String clientId) {
-//		this.clientId = clientId;
-//	}
-//
-//	public String getScope() {
-//		return scope;
-//	}
-//
-//	public void setScope(String scope) {
-//		this.scope = scope;
-//	}
-//
-//	@Override
-//	public String toString() {
-//		return "SmartServiceConfiguration{" +
-//				"fhirServerUrl='" + fhirServerUrl + '\'' +
-//				", clientId='" + clientId + '\'' +
-//				", scope='" + scope + '\'' +
-//				'}';
-//	}
-
 	String fhirServerUrl;
 	String clientId;
-	String clientSecret;
+	String scope = "*/read";
 
 	@Bean
 	public FhirContext fhirContext() {
 		return FhirContext.forR4();
+	}
+
+	public String getFhirServerUrl() {
+		return fhirServerUrl;
+	}
+
+	public void setFhirServerUrl(String fhirServerUrl) {
+		this.fhirServerUrl = fhirServerUrl;
 	}
 
 	public String getClientId() {
@@ -78,19 +44,21 @@ public class SmartServiceConfiguration {
 		this.clientId = clientId;
 	}
 
-	public String getClientSecret() {
-		return clientSecret;
+	public String getScope() {
+		return scope;
 	}
 
-	public void setClientSecret(String clientSecret) {
-		this.clientSecret = clientSecret;
+	public void setScope(String scope) {
+		this.scope = scope;
 	}
 
-	public String getFhirServerUrl() {
-		return fhirServerUrl;
+	@Override
+	public String toString() {
+		return "SmartServiceConfiguration{" +
+				"fhirServerUrl='" + fhirServerUrl + '\'' +
+				", clientId='" + clientId + '\'' +
+				", scope='" + scope + '\'' +
+				'}';
 	}
 
-	public void setFhirServerUrl(String serverUrl) {
-		this.fhirServerUrl = serverUrl;
-	}
 }

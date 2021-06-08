@@ -24,6 +24,9 @@ fhir.smart.service.scope=read/*
 _Note: A secret isn't needed as the SMART service  will sign the JWT with credentials
 provided by the JWKS library (through `spring-boot-starter-jwks`)_
 
+## Limitations
+Currently, the code is expecting the SMART backend service signature to use the `RS512` algorithm.
+
 ## Building the software
 
 ### Requirements

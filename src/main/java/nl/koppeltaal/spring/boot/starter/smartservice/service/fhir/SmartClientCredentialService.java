@@ -16,13 +16,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
+import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
+import java.util.UUID;
 import nl.koppeltaal.spring.boot.starter.smartservice.configuration.SmartServiceConfiguration;
 import nl.koppeltaal.spring.boot.starter.smartservice.response.Oauth2TokenResponse;
 import nl.koppeltaal.spring.boot.starter.smartservice.service.jwt.JwtValidationService;
+import nl.koppeltaal.springbootstarterjwks.config.JwksConfiguration;
+import nl.koppeltaal.springbootstarterjwks.util.KeyUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,6 +37,13 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
+import org.jose4j.jwk.PublicJsonWebKey;
+import org.jose4j.jwk.Use;
+import org.jose4j.jws.AlgorithmIdentifiers;
+import org.jose4j.jws.JsonWebSignature;
+import org.jose4j.jwt.JwtClaims;
+import org.jose4j.jwt.NumericDate;
+import org.jose4j.lang.JoseException;
 import org.springframework.stereotype.Service;
 
 /**
@@ -40,8 +51,9 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class SmartClientCredentialService {
-	public static final String DEFAULT_SCOPE = "*/write";
+	public static final String CLIENT_ASSERTION_TYPE = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
 	private final SmartServiceConfiguration smartServiceConfiguration;
+	private final JwksConfiguration jwksConfiguration;
 	private final FhirCapabilitiesService fhirCapabilitiesService;
 	private final JwtValidationService jwtValidationService;
 
@@ -49,9 +61,11 @@ public class SmartClientCredentialService {
 
 	private final Log LOG = LogFactory.getLog(SmartClientCredentialService.class);
 
-
-	public SmartClientCredentialService(SmartServiceConfiguration smartServiceConfiguration, FhirCapabilitiesService fhirCapabilitiesService, JwtValidationService jwtValidationService) {
+	public SmartClientCredentialService(SmartServiceConfiguration smartServiceConfiguration,
+			JwksConfiguration jwksConfiguration,
+			FhirCapabilitiesService fhirCapabilitiesService, JwtValidationService jwtValidationService) {
 		this.smartServiceConfiguration = smartServiceConfiguration;
+		this.jwksConfiguration = jwksConfiguration;
 		this.fhirCapabilitiesService = fhirCapabilitiesService;
 		this.jwtValidationService = jwtValidationService;
 	}
@@ -77,11 +91,12 @@ public class SmartClientCredentialService {
 
 			List<NameValuePair> params = new ArrayList<>();
 			params.add(new BasicNameValuePair("grant_type", "client_credentials"));
-			params.add(new BasicNameValuePair("scope", DEFAULT_SCOPE));
+			params.add(new BasicNameValuePair("scope", smartServiceConfiguration.getScope()));
+			params.add(new BasicNameValuePair("client_assertion_type", CLIENT_ASSERTION_TYPE));
+			params.add(new BasicNameValuePair("client_assertion", getSmartServiceClientAssertion(tokenUrl)));
 
 			postTokenRequest(tokenUrl, httpClient, params);
 		}
-
 	}
 
 	public String getAccessToken() throws IOException {
@@ -100,11 +115,51 @@ public class SmartClientCredentialService {
 			List<NameValuePair> params = new ArrayList<>();
 			params.add(new BasicNameValuePair("grant_type", "refresh_token"));
 			params.add(new BasicNameValuePair("refresh_token", tokenResponse.getRefreshToken()));
-			params.add(new BasicNameValuePair("scope", DEFAULT_SCOPE));
+			params.add(new BasicNameValuePair("scope", smartServiceConfiguration.getScope()));
 
 			postTokenRequest(tokenUrl, httpClient, params);
 		}
+	}
 
+	public String getSmartServiceClientAssertion(String oauthTokenEndpoint) {
+		try {
+			JwtClaims claims = new JwtClaims();
+			claims.setAudience(oauthTokenEndpoint);
+			claims.setIssuer(smartServiceConfiguration.getClientId());
+			claims.setSubject(smartServiceConfiguration.getClientId());
+			claims.setIssuedAt(NumericDate.now());
+			claims.setExpirationTime(NumericDate.fromMilliseconds(System.currentTimeMillis()
+					+ jwksConfiguration.getJwtTimeoutInSeconds() * 1000L));
+			claims.setJwtId(UUID.randomUUID().toString());
+
+			JsonWebSignature jws = new JsonWebSignature();
+
+			// The payload of the JWS is JSON content of the JWT Claims
+			jws.setPayload(claims.toJson());
+
+			KeyPair rsaKeyPair = KeyUtils
+					.getRsaKeyPair(jwksConfiguration.getSigningPublicKey(), jwksConfiguration.getSigningPrivateKey());
+
+			PublicJsonWebKey jwk = PublicJsonWebKey.Factory.newPublicJwk(rsaKeyPair.getPublic());
+			jwk.setPrivateKey(rsaKeyPair.getPrivate());
+			jwk.setUse(Use.SIGNATURE);
+			jwk.setAlgorithm(jwksConfiguration.getSigningAlgorithm());
+
+			// The JWT is signed using the private key
+			jws.setKey(jwk.getPrivateKey());
+
+			// Set the Key ID (kid) header because it's just the polite thing to do.
+			// We only have one key in this example but a using a Key ID helps
+			// facilitate a smooth key rollover process
+			jws.setKeyIdHeaderValue(KeyUtils.getFingerPrint(rsaKeyPair.getPublic()));
+
+			// Set the signature algorithm on the JWT/JWS that will integrity protect the claims
+			jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA512);
+
+			return jws.getCompactSerialization();
+		} catch (JoseException | NoSuchAlgorithmException | InvalidKeySpecException e) {
+			throw new RuntimeException("Failed to sign token", e);
+		}
 	}
 
 	private CloseableHttpClient createHttpClient() {
@@ -114,7 +169,6 @@ public class SmartClientCredentialService {
 	private void postTokenRequest(String tokenUrl, CloseableHttpClient httpClient, List<NameValuePair> params) throws IOException {
 		final HttpPost httpPost = new HttpPost(tokenUrl);
 		httpPost.setHeader("Accept", "application/json");
-		httpPost.setHeader("Authorization", "Basic " + Base64.getEncoder().encodeToString(String.format("%s:%s", smartServiceConfiguration.getClientId(), smartServiceConfiguration.getClientSecret()).getBytes(StandardCharsets.US_ASCII)));
 		httpPost.setEntity(new UrlEncodedFormEntity(params));
 		CloseableHttpResponse response = httpClient.execute(httpPost);
 		int statusCode = response.getStatusLine().getStatusCode();
