@@ -11,9 +11,10 @@
   </parent>
   <groupId>nl.koppeltaal</groupId>
   <artifactId>spring-boot-starter-smart-service</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1.0.0</version>
   <name>Koppeltaal-2.0-Spring-SMART-Service</name>
-  <description>Demo project for Spring Boot</description>
+  <description>spring-boot-starter-smart-service project to connect to a FHIR Store that works according to
+  the SMART Backend Service flow (https://hl7.org/fhir/uv/bulkdata/authorization/index.html)</description>
   <properties>
     <java.version>11</java.version>
     <hapi-fhir.version>4.2.0</hapi-fhir.version>
