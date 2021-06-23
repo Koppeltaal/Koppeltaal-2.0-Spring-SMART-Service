@@ -8,6 +8,8 @@ This adds the following functionality:
   and refreshes it when needed
 * A `JwtValidationService` that verifies if the JWT auth  token is still valid. 
   If not, it will refresh
+* An `AuditEventService` that automatically sends [Audit Events](https://www.hl7.org/fhir/auditevent.html)
+  to the FHIR Store. 
 *  Resource services that bidirectionally manage data fom the FHIR store via `DTO` objects  
   
 The above will be achieved by simply adding configuring the `application.properties`.
@@ -15,11 +17,12 @@ To get the `access_token`, use `SmartClientCredentialService.getAccessToken()`
 
 ## Available properties
 
-We can list 3 properties. See below for an example:
+We can list 4 properties. See below for an example:
 ```properties
 fhir.smart.service.fhirServerUrl=https://staging-fhir-server.koppeltaal.headease.nl/fhir
 fhir.smart.service.clientId=epd-client-id
 fhir.smart.service.scope=read/*
+fhir.smart.service.auditEventsEnabled=true
 ```
 
 _Note: A secret isn't needed as the SMART service  will sign the JWT with credentials

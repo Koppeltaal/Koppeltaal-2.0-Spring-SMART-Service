@@ -22,6 +22,7 @@ public class SmartServiceConfiguration {
 	String fhirServerUrl;
 	String clientId;
 	String scope = "*/read";
+	boolean auditEventsEnabled = true;
 
 	@Bean
 	public FhirContext fhirContext() {
@@ -52,12 +53,21 @@ public class SmartServiceConfiguration {
 		this.scope = scope;
 	}
 
+	public boolean isAuditEventsEnabled() {
+		return auditEventsEnabled;
+	}
+
+	public void setAuditEventsEnabled(boolean auditEventsEnabled) {
+		this.auditEventsEnabled = auditEventsEnabled;
+	}
+
 	@Override
 	public String toString() {
 		return "SmartServiceConfiguration{" +
 				"fhirServerUrl='" + fhirServerUrl + '\'' +
 				", clientId='" + clientId + '\'' +
 				", scope='" + scope + '\'' +
+				", auditEventsEnabled=" + auditEventsEnabled +
 				'}';
 	}
 
