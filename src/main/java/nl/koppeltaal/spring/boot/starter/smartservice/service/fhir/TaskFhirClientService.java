@@ -39,8 +39,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class TaskFhirClientService extends BaseFhirClientService<TaskDto, Task> {
 
-	public TaskFhirClientService(SmartServiceConfiguration smartServiceConfiguration, SmartClientCredentialService smartClientCredentialService, FhirContext fhirContext, TaskDtoConverter taskDtoConverter) {
-		super(smartServiceConfiguration, smartClientCredentialService, fhirContext, taskDtoConverter);
+	public TaskFhirClientService(SmartServiceConfiguration smartServiceConfiguration, SmartClientCredentialService smartClientCredentialService, FhirContext fhirContext, TaskDtoConverter taskDtoConverter, AuditEventFhirClientService auditEventService) {
+		super(smartServiceConfiguration, smartClientCredentialService, fhirContext, taskDtoConverter, auditEventService);
 	}
 
 	public Task getOrCreateTask(Patient patient, Practitioner practitioner, ActivityDefinition activityDefinition, boolean forceNew) throws IOException, JwkException {
@@ -60,7 +60,7 @@ public class TaskFhirClientService extends BaseFhirClientService<TaskDto, Task> 
 			task.getRestriction().addRecipient(buildReference(practitioner));
 			task.getExecutionPeriod().setStart(new Date());
 			task.setInstantiatesCanonical(ResourceUtils.getReference(activityDefinition));
-			task = storeResource("system", task);
+			task = storeResource(task);
 		} else {
 			task = tasks.get(0);
 		}

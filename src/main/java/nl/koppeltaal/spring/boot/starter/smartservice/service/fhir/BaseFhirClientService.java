@@ -10,9 +10,11 @@ package nl.koppeltaal.spring.boot.starter.smartservice.service.fhir;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.api.MethodOutcome;
+import ca.uhn.fhir.rest.api.SortSpec;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.BearerTokenAuthInterceptor;
 import ca.uhn.fhir.rest.gclient.ICriterion;
+import ca.uhn.fhir.rest.gclient.IQuery;
 import ca.uhn.fhir.rest.gclient.TokenClientParam;
 import com.auth0.jwk.JwkException;
 import java.io.IOException;
@@ -26,6 +28,7 @@ import nl.koppeltaal.spring.boot.starter.smartservice.dto.DtoConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.DomainResource;
+import org.hl7.fhir.r4.model.Enumerations.FHIRAllTypes;
 import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Meta;
@@ -41,12 +44,14 @@ public abstract class BaseFhirClientService<D extends BaseDto, R extends DomainR
 	final SmartClientCredentialService smartClientCredentialService;
 	final FhirContext fhirContext;
 	final DtoConverter<D, R> dtoConverter;
+	final AuditEventFhirClientService auditEventService;
 
-	public BaseFhirClientService(SmartServiceConfiguration smartServiceConfiguration, SmartClientCredentialService smartClientCredentialService, FhirContext fhirContext, DtoConverter<D, R> dtoConverter) {
+	public BaseFhirClientService(SmartServiceConfiguration smartServiceConfiguration, SmartClientCredentialService smartClientCredentialService, FhirContext fhirContext, DtoConverter<D, R> dtoConverter, AuditEventFhirClientService auditEventService) {
 		this.smartServiceConfiguration = smartServiceConfiguration;
 		this.smartClientCredentialService = smartClientCredentialService;
 		this.fhirContext = fhirContext;
 		this.dtoConverter = dtoConverter;
+		this.auditEventService = auditEventService;
 	}
 
 	public void deleteResource(String id) throws IOException, JwkException {
@@ -65,11 +70,11 @@ public abstract class BaseFhirClientService<D extends BaseDto, R extends DomainR
 		return getResourceByIdentifier(system, identifier.getValue());
 	}
 
-	public R getResourceByIdentifier(String identifierValue) throws IOException, JwkException {
+	public R getResourceByIdentifier(String identifierValue) throws IOException{
 		return getResourceByIdentifier(identifierValue, getDefaultSystem());
 	}
 
-	public R getResourceByReference(String reference) throws IOException, JwkException {
+	public R getResourceByReference(String reference) throws IOException {
 		return (R) getFhirClient().read().resource(getResourceName()).withId(reference).execute();
 	}
 
@@ -83,9 +88,39 @@ public abstract class BaseFhirClientService<D extends BaseDto, R extends DomainR
 		return null;
 	}
 
+	public List<R> getResources(SortSpec sort) throws  IOException {
+		return getResourcesInternal(sort, null);
+	}
+
 	public List<R> getResources() throws JwkException, IOException {
+		return getResourcesInternal(null, null);
+	}
+
+	public List<R> getResources(ICriterion<?> criterion) throws IOException {
+		return getResourcesInternal(null, criterion);
+	}
+
+	public List<R> getResources(SortSpec sort, ICriterion<?> criterion) throws IOException {
+		return getResourcesInternal(sort, criterion);
+	}
+
+	private List<R> getResourcesInternal(SortSpec sort, ICriterion<?> criterion) throws IOException {
 		List<R> rv = new ArrayList<>();
-		Bundle bundle = getFhirClient().search().forResource(getResourceName()).returnBundle(Bundle.class).execute();
+
+		final IQuery<Bundle> query = getFhirClient().search().forResource(getResourceName()).returnBundle(Bundle.class);
+
+		if(sort != null) {
+			query.sort(sort);
+		}
+
+		if(criterion != null) {
+			query.where(criterion);
+		}
+
+		//FIXME: The server returns paginated results, this client doesn't support pagination,
+		// it just transforms the amount returned (fhir store config)
+		Bundle bundle = query.execute();
+
 		for (Bundle.BundleEntryComponent component : bundle.getEntry()) {
 			R resource = (R) component.getResource();
 			rv.add(resource);
@@ -93,17 +128,7 @@ public abstract class BaseFhirClientService<D extends BaseDto, R extends DomainR
 		return rv;
 	}
 
-	public List<R> getResources(ICriterion<?> criterion) throws JwkException, IOException {
-		List<R> rv = new ArrayList<>();
-		Bundle bundle = getFhirClient().search().forResource(getResourceName()).where(criterion).returnBundle(Bundle.class).execute();
-		for (Bundle.BundleEntryComponent component : bundle.getEntry()) {
-			R resource = (R) component.getResource();
-			rv.add(resource);
-		}
-		return rv;
-	}
-
-	public R storeResource(String source, R resource) throws IOException, JwkException {
+	public R storeResource(R resource) throws IOException {
 		String identifier = getIdentifier(getDefaultSystem(), resource);
 		String id = getId(resource);
 		R res = null;
@@ -117,17 +142,28 @@ public abstract class BaseFhirClientService<D extends BaseDto, R extends DomainR
 		if (res != null) {
 			dtoConverter.applyDto(res, dtoConverter.convert(resource));
 			MethodOutcome execute = getFhirClient().update().resource(res).execute();
-			return (R) execute.getResource();
+			final R updatedEntity = (R) execute.getResource();
+
+			if(!FHIRAllTypes.AUDITEVENT.getDisplay().equals(getResourceName())) {
+				auditEventService.registerRestUpdate(updatedEntity);
+			}
+			return updatedEntity;
 		}
 
-		updateMetaElement(source, resource);
+		updateMetaElement(resource);
 		MethodOutcome execute = getFhirClient().create().resource(resource).execute();
-		return (R) execute.getResource();
+		final R updatedEntity = (R) execute.getResource();
+
+		if(!FHIRAllTypes.AUDITEVENT.getDisplay().equals(getResourceName())) {
+			auditEventService.registerRestCreate(updatedEntity);
+		}
+
+		return updatedEntity;
 	}
 
 	protected abstract String getDefaultSystem();
 
-	protected IGenericClient getFhirClient() throws JwkException, IOException {
+	protected IGenericClient getFhirClient() throws IOException {
 
 		IGenericClient iGenericClient = fhirContext.newRestfulGenericClient(smartServiceConfiguration.getFhirServerUrl());
 
@@ -138,7 +174,7 @@ public abstract class BaseFhirClientService<D extends BaseDto, R extends DomainR
 
 	}
 
-	private String getId(R resource) {
+	protected String getId(DomainResource resource) {
 		IdType idElement = resource.getIdElement();
 		if (!idElement.isEmpty()) {
 			return idElement.getIdPart();
@@ -164,7 +200,7 @@ public abstract class BaseFhirClientService<D extends BaseDto, R extends DomainR
 		}
 	}
 
-	protected R getResourceByIdentifier(String identifierValue, String identifierSystem) throws JwkException, IOException {
+	protected R getResourceByIdentifier(String identifierValue, String identifierSystem) throws IOException {
 		ICriterion<TokenClientParam> criterion = new TokenClientParam("identifier").exactly().systemAndIdentifier(identifierSystem, identifierValue);
 		Bundle bundle = getFhirClient().search().forResource(getResourceName()).where(criterion).returnBundle(Bundle.class).execute();
 		if (bundle.getTotal() > 0) {
@@ -176,12 +212,12 @@ public abstract class BaseFhirClientService<D extends BaseDto, R extends DomainR
 
 	protected abstract String getResourceName();
 
-	private void updateMetaElement(String source, R resource) {
+	private void updateMetaElement(R resource) {
 		Meta meta = resource.getMeta();
 		if (meta == null) {
 			meta = new Meta();
 		}
-		meta.setSource(source);
+		meta.setSource(smartServiceConfiguration.getMetaSourceUuid());
 		resource.setMeta(meta);
 	}
 }
