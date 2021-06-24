@@ -9,11 +9,13 @@
 package nl.koppeltaal.spring.boot.starter.smartservice.configuration;
 
 import ca.uhn.fhir.context.FhirContext;
+import javax.annotation.PostConstruct;
 import nl.koppeltaal.springbootstarterjwks.config.JwksConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.Assert;
 
 @Configuration
 @ConfigurationProperties(prefix = "fhir.smart.service")
@@ -22,11 +24,20 @@ public class SmartServiceConfiguration {
 	String fhirServerUrl;
 	String clientId;
 	String scope = "*/read";
+	String metaSourceUuid;
 	boolean auditEventsEnabled = true;
 
 	@Bean
 	public FhirContext fhirContext() {
 		return FhirContext.forR4();
+	}
+
+	@PostConstruct
+	public void validate() {
+		Assert.notNull(fhirServerUrl, "The config property [fhir.smart.service.fhirServerUrl] is required to communicate  with the FHIR Store");
+		Assert.notNull(clientId, "The config property [fhir.smart.service.clientId] is required to communicate  with the FHIR Store");
+		Assert.notNull(metaSourceUuid, "The config property [fhir.smart.service.metaSourceUuid] is required to set a source on entities");
+		Assert.isTrue(metaSourceUuid.startsWith("urn:uuid:"), "The config property [fhir.smart.service.metaSourceUuid] must start with \"urn:uuid:\"");
 	}
 
 	public String getFhirServerUrl() {
@@ -53,6 +64,14 @@ public class SmartServiceConfiguration {
 		this.scope = scope;
 	}
 
+	public String getMetaSourceUuid() {
+		return metaSourceUuid;
+	}
+
+	public void setMetaSourceUuid(String metaSourceUuid) {
+		this.metaSourceUuid = metaSourceUuid;
+	}
+
 	public boolean isAuditEventsEnabled() {
 		return auditEventsEnabled;
 	}
@@ -67,6 +86,7 @@ public class SmartServiceConfiguration {
 				"fhirServerUrl='" + fhirServerUrl + '\'' +
 				", clientId='" + clientId + '\'' +
 				", scope='" + scope + '\'' +
+				", metaSourceUuid='" + metaSourceUuid + '\'' +
 				", auditEventsEnabled=" + auditEventsEnabled +
 				'}';
 	}

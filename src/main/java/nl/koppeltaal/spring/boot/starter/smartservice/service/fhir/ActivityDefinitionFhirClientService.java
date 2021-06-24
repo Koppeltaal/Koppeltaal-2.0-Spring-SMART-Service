@@ -28,8 +28,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class ActivityDefinitionFhirClientService extends BaseFhirClientService<ActivityDefinitionDto, ActivityDefinition> {
 
-	public ActivityDefinitionFhirClientService(SmartServiceConfiguration smartServiceConfiguration, SmartClientCredentialService smartClientCredentialService, FhirContext fhirContext, ActivityDefinitionDtoConverter activityDefinitionDtoConverter) {
-		super(smartServiceConfiguration, smartClientCredentialService, fhirContext, activityDefinitionDtoConverter);
+	public ActivityDefinitionFhirClientService(SmartServiceConfiguration smartServiceConfiguration, SmartClientCredentialService smartClientCredentialService, FhirContext fhirContext, ActivityDefinitionDtoConverter activityDefinitionDtoConverter, AuditEventService auditEventService) {
+		super(smartServiceConfiguration, smartClientCredentialService, fhirContext, activityDefinitionDtoConverter, auditEventService);
 	}
 
 	public List<ActivityDefinition> getResourcesForPatient(String patientReference) throws IOException, JwkException {
