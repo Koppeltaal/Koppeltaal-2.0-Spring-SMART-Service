@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class PatientFhirClientService extends BaseFhirClientService<PatientDto, Patient> {
 
-	public PatientFhirClientService(SmartServiceConfiguration smartServiceConfiguration, SmartClientCredentialService smartClientCredentialService, FhirContext fhirContext, PatientDtoConverter patientDtoConverter, AuditEventService auditEventService) {
+	public PatientFhirClientService(SmartServiceConfiguration smartServiceConfiguration, SmartClientCredentialService smartClientCredentialService, FhirContext fhirContext, PatientDtoConverter patientDtoConverter, AuditEventFhirClientService auditEventService) {
 		super(smartServiceConfiguration, smartClientCredentialService, fhirContext, patientDtoConverter, auditEventService);
 	}
 

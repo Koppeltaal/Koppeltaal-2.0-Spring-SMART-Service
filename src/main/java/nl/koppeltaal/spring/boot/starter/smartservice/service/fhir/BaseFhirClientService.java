@@ -10,9 +10,11 @@ package nl.koppeltaal.spring.boot.starter.smartservice.service.fhir;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.api.MethodOutcome;
+import ca.uhn.fhir.rest.api.SortSpec;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.BearerTokenAuthInterceptor;
 import ca.uhn.fhir.rest.gclient.ICriterion;
+import ca.uhn.fhir.rest.gclient.IQuery;
 import ca.uhn.fhir.rest.gclient.TokenClientParam;
 import com.auth0.jwk.JwkException;
 import java.io.IOException;
@@ -42,9 +44,9 @@ public abstract class BaseFhirClientService<D extends BaseDto, R extends DomainR
 	final SmartClientCredentialService smartClientCredentialService;
 	final FhirContext fhirContext;
 	final DtoConverter<D, R> dtoConverter;
-	final AuditEventService auditEventService;
+	final AuditEventFhirClientService auditEventService;
 
-	public BaseFhirClientService(SmartServiceConfiguration smartServiceConfiguration, SmartClientCredentialService smartClientCredentialService, FhirContext fhirContext, DtoConverter<D, R> dtoConverter, AuditEventService auditEventService) {
+	public BaseFhirClientService(SmartServiceConfiguration smartServiceConfiguration, SmartClientCredentialService smartClientCredentialService, FhirContext fhirContext, DtoConverter<D, R> dtoConverter, AuditEventFhirClientService auditEventService) {
 		this.smartServiceConfiguration = smartServiceConfiguration;
 		this.smartClientCredentialService = smartClientCredentialService;
 		this.fhirContext = fhirContext;
@@ -86,19 +88,39 @@ public abstract class BaseFhirClientService<D extends BaseDto, R extends DomainR
 		return null;
 	}
 
-	public List<R> getResources() throws JwkException, IOException {
-		List<R> rv = new ArrayList<>();
-		Bundle bundle = getFhirClient().search().forResource(getResourceName()).returnBundle(Bundle.class).execute();
-		for (Bundle.BundleEntryComponent component : bundle.getEntry()) {
-			R resource = (R) component.getResource();
-			rv.add(resource);
-		}
-		return rv;
+	public List<R> getResources(SortSpec sort) throws  IOException {
+		return getResourcesInternal(sort, null);
 	}
 
-	public List<R> getResources(ICriterion<?> criterion) throws JwkException, IOException {
+	public List<R> getResources() throws JwkException, IOException {
+		return getResourcesInternal(null, null);
+	}
+
+	public List<R> getResources(ICriterion<?> criterion) throws IOException {
+		return getResourcesInternal(null, criterion);
+	}
+
+	public List<R> getResources(SortSpec sort, ICriterion<?> criterion) throws IOException {
+		return getResourcesInternal(sort, criterion);
+	}
+
+	private List<R> getResourcesInternal(SortSpec sort, ICriterion<?> criterion) throws IOException {
 		List<R> rv = new ArrayList<>();
-		Bundle bundle = getFhirClient().search().forResource(getResourceName()).where(criterion).returnBundle(Bundle.class).execute();
+
+		final IQuery<Bundle> query = getFhirClient().search().forResource(getResourceName()).returnBundle(Bundle.class);
+
+		if(sort != null) {
+			query.sort(sort);
+		}
+
+		if(criterion != null) {
+			query.where(criterion);
+		}
+
+		//FIXME: The server returns paginated results, this client doesn't support pagination,
+		// it just transforms the amount returned (fhir store config)
+		Bundle bundle = query.execute();
+
 		for (Bundle.BundleEntryComponent component : bundle.getEntry()) {
 			R resource = (R) component.getResource();
 			rv.add(resource);

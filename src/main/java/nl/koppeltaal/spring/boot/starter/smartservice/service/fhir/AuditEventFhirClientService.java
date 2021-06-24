@@ -9,7 +9,6 @@ import nl.koppeltaal.spring.boot.starter.smartservice.configuration.SmartService
 import nl.koppeltaal.spring.boot.starter.smartservice.dto.AuditEventDto;
 import nl.koppeltaal.spring.boot.starter.smartservice.dto.AuditEventDto.AuditEventSubType;
 import nl.koppeltaal.spring.boot.starter.smartservice.dto.AuditEventDto.AuditEventType;
-import nl.koppeltaal.spring.boot.starter.smartservice.dto.AuditEventDtoConverter;
 import nl.koppeltaal.spring.boot.starter.smartservice.dto.DtoConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.AuditEvent;
@@ -30,11 +29,11 @@ import org.springframework.stereotype.Service;
  * Service to persist {@link AuditEvent} objects. This service blocks update or delete calls
  */
 @Service
-public class AuditEventService extends BaseFhirClientService<AuditEventDto, AuditEvent> {
+public class AuditEventFhirClientService extends BaseFhirClientService<AuditEventDto, AuditEvent> {
 
-  private static final Logger LOG = LoggerFactory.getLogger(AuditEventService.class);
+  private static final Logger LOG = LoggerFactory.getLogger(AuditEventFhirClientService.class);
 
-  public AuditEventService(SmartServiceConfiguration smartServiceConfiguration, SmartClientCredentialService smartClientCredentialService, FhirContext fhirContext, DtoConverter<AuditEventDto, AuditEvent> dtoConverter) {
+  public AuditEventFhirClientService(SmartServiceConfiguration smartServiceConfiguration, SmartClientCredentialService smartClientCredentialService, FhirContext fhirContext, DtoConverter<AuditEventDto, AuditEvent> dtoConverter) {
     super(smartServiceConfiguration, smartClientCredentialService, fhirContext, dtoConverter, null);
   }
 

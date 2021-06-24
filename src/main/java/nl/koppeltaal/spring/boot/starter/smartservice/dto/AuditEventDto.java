@@ -1,10 +1,6 @@
 package nl.koppeltaal.spring.boot.starter.smartservice.dto;
 
 import java.util.Date;
-import java.util.List;
-import org.hl7.fhir.r4.model.AuditEvent.AuditEventAgentComponent;
-import org.hl7.fhir.r4.model.AuditEvent.AuditEventEntityComponent;
-import org.hl7.fhir.r4.model.AuditEvent.AuditEventSourceComponent;
 import org.hl7.fhir.r4.model.Coding;
 
 public class AuditEventDto extends BaseDto {
@@ -14,20 +10,29 @@ public class AuditEventDto extends BaseDto {
 
   //TODO: Implement all fields
 
-  private AuditEventType type;
+  private String type;
+  private String subType;
   private Date recorded;
 
-  //TODO: Make these DTOs as well
-  private List<AuditEventAgentComponent> agent;
-  private AuditEventSourceComponent source;
-  private List<AuditEventEntityComponent> entity;
+  //TODO: Make proper DTOs objects for  agent, source and entity
+  private String sourceReference;
+  private String entityWhat;
+  private String source;
 
-  public AuditEventType getType() {
+  public String getType() {
     return type;
   }
 
-  public void setType(AuditEventType type) {
+  public void setType(String type) {
     this.type = type;
+  }
+
+  public String getSubType() {
+    return subType;
+  }
+
+  public void setSubType(String subType) {
+    this.subType = subType;
   }
 
   public Date getRecorded() {
@@ -38,28 +43,28 @@ public class AuditEventDto extends BaseDto {
     this.recorded = recorded;
   }
 
-  public List<AuditEventAgentComponent> getAgent() {
-    return agent;
+  public String getSourceReference() {
+    return sourceReference;
   }
 
-  public void setAgent(List<AuditEventAgentComponent> agent) {
-    this.agent = agent;
+  public void setSourceReference(String sourceReference) {
+    this.sourceReference = sourceReference;
   }
 
-  public AuditEventSourceComponent getSource() {
+  public String getEntityWhat() {
+    return entityWhat;
+  }
+
+  public void setEntityWhat(String entityWhat) {
+    this.entityWhat = entityWhat;
+  }
+
+  public String getSource() {
     return source;
   }
 
-  public void setSource(AuditEventSourceComponent source) {
+  public void setSource(String source) {
     this.source = source;
-  }
-
-  public List<AuditEventEntityComponent> getEntity() {
-    return entity;
-  }
-
-  public void setEntity(List<AuditEventEntityComponent> entity) {
-    this.entity = entity;
   }
 
   public enum AuditEventType {
@@ -136,8 +141,8 @@ public class AuditEventDto extends BaseDto {
       return display;
     }
 
-    public static AuditEventType byDisplay(String display) {
-      for (AuditEventType value : AuditEventType.values()) {
+    public static AuditEventSubType byDisplay(String display) {
+      for (AuditEventSubType value : AuditEventSubType.values()) {
         if (value.getDisplay().equals(display)) {
           return value;
         }

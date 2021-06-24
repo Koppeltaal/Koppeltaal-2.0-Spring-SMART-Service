@@ -2,9 +2,7 @@ package nl.koppeltaal.spring.boot.starter.smartservice.event;
 
 import java.io.IOException;
 import javax.annotation.PreDestroy;
-import nl.koppeltaal.spring.boot.starter.smartservice.service.fhir.AuditEventService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import nl.koppeltaal.spring.boot.starter.smartservice.service.fhir.AuditEventFhirClientService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
@@ -20,9 +18,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class AutomatedAuditEvents {
 
-  private final AuditEventService auditEventService;
+  private final AuditEventFhirClientService auditEventService;
 
-  public AutomatedAuditEvents(AuditEventService auditEventService) {
+  public AutomatedAuditEvents(AuditEventFhirClientService auditEventService) {
     this.auditEventService = auditEventService;
   }
 
