@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
  *
  */
 @Service
-public class RelatedPersonFhirClientService extends BaseFhirClientService<RelatedPersonDto, RelatedPerson> {
+public class RelatedPersonFhirClientService extends BaseFhirClientCrudService<RelatedPersonDto, RelatedPerson> {
 
 	public RelatedPersonFhirClientService(SmartServiceConfiguration smartServiceConfiguration, SmartClientCredentialService smartClientCredentialService, FhirContext fhirContext, RelatedPersonDtoConverter dtoConverter, AuditEventFhirClientService auditEventService) {
 		super(smartServiceConfiguration, smartClientCredentialService, fhirContext, dtoConverter, auditEventService);

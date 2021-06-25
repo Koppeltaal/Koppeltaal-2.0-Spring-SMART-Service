@@ -37,7 +37,7 @@ import org.springframework.stereotype.Service;
  *
  */
 @Service
-public class TaskFhirClientService extends BaseFhirClientService<TaskDto, Task> {
+public class TaskFhirClientService extends BaseFhirClientCrudService<TaskDto, Task> {
 
 	public TaskFhirClientService(SmartServiceConfiguration smartServiceConfiguration, SmartClientCredentialService smartClientCredentialService, FhirContext fhirContext, TaskDtoConverter taskDtoConverter, AuditEventFhirClientService auditEventService) {
 		super(smartServiceConfiguration, smartClientCredentialService, fhirContext, taskDtoConverter, auditEventService);

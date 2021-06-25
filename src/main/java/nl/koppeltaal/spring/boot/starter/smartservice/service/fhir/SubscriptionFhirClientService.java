@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
  *
  */
 @Service
-public class SubscriptionFhirClientService extends BaseFhirClientService<SubscriptionDto, Subscription> {
+public class SubscriptionFhirClientService extends BaseFhirClientCrudService<SubscriptionDto, Subscription> {
 
 	public SubscriptionFhirClientService(SmartServiceConfiguration smartServiceConfiguration, SmartClientCredentialService smartClientCredentialService, FhirContext fhirContext, SubscriptionDtoConverter subscriptionDtoConverter, AuditEventFhirClientService auditEventService) {
 		super(smartServiceConfiguration, smartClientCredentialService, fhirContext, subscriptionDtoConverter, auditEventService);

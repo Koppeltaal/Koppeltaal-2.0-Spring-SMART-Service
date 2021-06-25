@@ -19,7 +19,6 @@ import org.hl7.fhir.r4.model.AuditEvent.AuditEventSourceComponent;
 import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.DomainResource;
 import org.hl7.fhir.r4.model.Enumerations.FHIRAllTypes;
-import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.InstantType;
 import org.hl7.fhir.r4.model.Reference;
 import org.slf4j.Logger;
@@ -30,7 +29,7 @@ import org.springframework.stereotype.Service;
  * Service to persist {@link AuditEvent} objects. This service blocks update or delete calls
  */
 @Service
-public class AuditEventFhirClientService extends BaseFhirClientService<AuditEventDto, AuditEvent> {
+public class AuditEventFhirClientService extends BaseFhirClientCrudService<AuditEventDto, AuditEvent> {
 
   private static final Logger LOG = LoggerFactory.getLogger(AuditEventFhirClientService.class);
 

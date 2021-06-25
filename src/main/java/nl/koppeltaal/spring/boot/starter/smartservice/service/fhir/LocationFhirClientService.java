@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
  *
  */
 @Service
-public class LocationFhirClientService extends BaseFhirClientService<LocationDto, Location> {
+public class LocationFhirClientService extends BaseFhirClientCrudService<LocationDto, Location> {
 
 	public LocationFhirClientService(SmartServiceConfiguration smartServiceConfiguration, SmartClientCredentialService smartClientCredentialService, FhirContext fhirContext, LocationDtoConverter locationDtoConverter, AuditEventFhirClientService auditEventService) {
 		super(smartServiceConfiguration, smartClientCredentialService, fhirContext, locationDtoConverter, auditEventService);

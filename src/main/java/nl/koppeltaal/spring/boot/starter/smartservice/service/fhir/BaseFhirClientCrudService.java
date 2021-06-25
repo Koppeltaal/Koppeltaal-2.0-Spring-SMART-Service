@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 @SuppressWarnings("unchecked")
-public abstract class BaseFhirClientService<D extends BaseDto, R extends DomainResource> {
+public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends DomainResource> {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AutomatedAuditEvents.class);
 
@@ -52,7 +52,7 @@ public abstract class BaseFhirClientService<D extends BaseDto, R extends DomainR
 	final DtoConverter<D, R> dtoConverter;
 	final AuditEventFhirClientService auditEventService;
 
-	public BaseFhirClientService(SmartServiceConfiguration smartServiceConfiguration, SmartClientCredentialService smartClientCredentialService, FhirContext fhirContext, DtoConverter<D, R> dtoConverter, AuditEventFhirClientService auditEventService) {
+	public BaseFhirClientCrudService(SmartServiceConfiguration smartServiceConfiguration, SmartClientCredentialService smartClientCredentialService, FhirContext fhirContext, DtoConverter<D, R> dtoConverter, AuditEventFhirClientService auditEventService) {
 		this.smartServiceConfiguration = smartServiceConfiguration;
 		this.smartClientCredentialService = smartClientCredentialService;
 		this.fhirContext = fhirContext;
