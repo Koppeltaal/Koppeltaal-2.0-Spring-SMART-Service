@@ -17,13 +17,18 @@ To get the `access_token`, use `SmartClientCredentialService.getAccessToken()`
 
 ## Available properties
 
-We can list 4 properties. See below for an example:
+We can list the following properties:
 ```properties
 fhir.smart.service.fhirServerUrl=https://staging-fhir-server.koppeltaal.headease.nl/fhir
 fhir.smart.service.clientId=epd-client-id
 fhir.smart.service.scope=read/*
 fhir.smart.service.auditEventsEnabled=true
+fhir.smart.service.metaSourceUuid=urn:uuid:<UUID>
 ```
+
+The  `metaSourceUuid` value will be automatically appended to entities that are created in the FHIR store 
+on the `<Entity>.meta.source` field.  This field should never be changed once used.  It allows to query
+on elements specific to your UUID. For example: "Subsribe to changes for all tasks that have an `ActivityDefinition.meta.source` that equals mine"   
 
 _Note: A secret isn't needed as the SMART service  will sign the JWT with credentials
 provided by the JWKS library (through `spring-boot-starter-jwks`)_
