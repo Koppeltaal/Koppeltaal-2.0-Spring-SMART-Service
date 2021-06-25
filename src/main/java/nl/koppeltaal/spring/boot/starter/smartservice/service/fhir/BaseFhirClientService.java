@@ -25,7 +25,9 @@ import java.util.List;
 import nl.koppeltaal.spring.boot.starter.smartservice.configuration.SmartServiceConfiguration;
 import nl.koppeltaal.spring.boot.starter.smartservice.dto.BaseDto;
 import nl.koppeltaal.spring.boot.starter.smartservice.dto.DtoConverter;
+import nl.koppeltaal.spring.boot.starter.smartservice.event.AutomatedAuditEvents;
 import org.apache.commons.lang3.StringUtils;
+import org.hl7.fhir.instance.model.api.IBaseOperationOutcome;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.DomainResource;
 import org.hl7.fhir.r4.model.Enumerations.FHIRAllTypes;
@@ -33,12 +35,16 @@ import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Meta;
 import org.hl7.fhir.r4.model.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  */
 @SuppressWarnings("unchecked")
 public abstract class BaseFhirClientService<D extends BaseDto, R extends DomainResource> {
+
+	private static final Logger LOG = LoggerFactory.getLogger(AutomatedAuditEvents.class);
 
 	final SmartServiceConfiguration smartServiceConfiguration;
 	final SmartClientCredentialService smartClientCredentialService;
@@ -55,13 +61,18 @@ public abstract class BaseFhirClientService<D extends BaseDto, R extends DomainR
 	}
 
 	public void deleteResource(String id) throws IOException, JwkException {
-		getFhirClient().delete().resourceById(getResourceName(), id).execute();
+		final IBaseOperationOutcome execute = getFhirClient().delete()
+				.resourceById(getResourceName(), id).execute();
+
+		LOG.info("Deleted entity [{}]", execute.getIdElement());
+
 	}
 
 	public void deleteResourceByReference(String id) throws IOException, JwkException {
 		R resource = getResourceByReference(id);
 		if (resource != null) {
-			getFhirClient().delete().resource(resource).execute();
+			final IBaseOperationOutcome execute = getFhirClient().delete().resource(resource).execute();
+			LOG.info("Deleted entity [{}]", execute.getIdElement());
 		}
 	}
 
@@ -144,6 +155,7 @@ public abstract class BaseFhirClientService<D extends BaseDto, R extends DomainR
 			MethodOutcome execute = getFhirClient().update().resource(res).execute();
 			final R updatedEntity = (R) execute.getResource();
 
+			LOG.info("Updated entity [{}]", updatedEntity.getIdElement());
 			if(!FHIRAllTypes.AUDITEVENT.getDisplay().equals(getResourceName())) {
 				auditEventService.registerRestUpdate(updatedEntity);
 			}
@@ -153,6 +165,7 @@ public abstract class BaseFhirClientService<D extends BaseDto, R extends DomainR
 		updateMetaElement(resource);
 		MethodOutcome execute = getFhirClient().create().resource(resource).execute();
 		final R updatedEntity = (R) execute.getResource();
+		LOG.info("Created entity [{}]", updatedEntity.getIdElement());
 
 		if(!FHIRAllTypes.AUDITEVENT.getDisplay().equals(getResourceName())) {
 			auditEventService.registerRestCreate(updatedEntity);
