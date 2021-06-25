@@ -65,6 +65,7 @@ public abstract class BaseFhirClientService<D extends BaseDto, R extends DomainR
 				.resourceById(getResourceName(), id).execute();
 
 		LOG.info("Deleted entity [{}]", execute.getIdElement());
+		auditEventService.registerRestDelete(execute.getIdElement());
 
 	}
 
@@ -73,6 +74,7 @@ public abstract class BaseFhirClientService<D extends BaseDto, R extends DomainR
 		if (resource != null) {
 			final IBaseOperationOutcome execute = getFhirClient().delete().resource(resource).execute();
 			LOG.info("Deleted entity [{}]", execute.getIdElement());
+			auditEventService.registerRestDelete(execute.getIdElement());
 		}
 	}
 

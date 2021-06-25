@@ -11,6 +11,7 @@ import nl.koppeltaal.spring.boot.starter.smartservice.dto.AuditEventDto.AuditEve
 import nl.koppeltaal.spring.boot.starter.smartservice.dto.AuditEventDto.AuditEventType;
 import nl.koppeltaal.spring.boot.starter.smartservice.dto.DtoConverter;
 import org.apache.commons.lang3.StringUtils;
+import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r4.model.AuditEvent;
 import org.hl7.fhir.r4.model.AuditEvent.AuditEventAction;
 import org.hl7.fhir.r4.model.AuditEvent.AuditEventEntityComponent;
@@ -97,21 +98,29 @@ public class AuditEventFhirClientService extends BaseFhirClientService<AuditEven
     return registerRestOperation(resource, subType, AuditEventAction.U);
   }
 
+  public AuditEvent registerRestDelete(IIdType idType) throws IOException {
+    final Coding subType = AuditEventSubType.RESTFUL_INTERACTION__DELETE.getCoding();
+    return registerRestOperation(idType, subType, AuditEventAction.D);
+  }
+
   private AuditEvent registerRestOperation(DomainResource resource, Coding subType, AuditEventAction auditEventAction) throws IOException {
 
     // Do not recursively create audit event logs for creating an audit event
     if(resource instanceof AuditEvent) return (AuditEvent) resource;
 
+    return registerRestOperation(resource.getIdElement(), subType, auditEventAction);
+  }
+
+  private AuditEvent registerRestOperation(IIdType idType, Coding subType, AuditEventAction auditEventAction) throws IOException {
     final Coding type = AuditEventType.RESTFUL_OPERATION.getCoding();
-    final IdType resourceIdElement = resource.getIdElement();
-    LOG.info("Creating AuditLog with type [{}] and subType [{}] for resource [{}]", type.getDisplay(), subType.getDisplay(), resourceIdElement);
+    LOG.info("Creating AuditLog with type [{}] and subType [{}] for resource [{}]", type.getDisplay(), subType.getDisplay(), idType);
 
     final AuditEvent auditEvent = getAuditEventBase(type, subType);
     auditEvent.setAction(auditEventAction);
 
     final AuditEventEntityComponent entity = new AuditEventEntityComponent();
 
-    entity.setWhat(new Reference(resourceIdElement));
+    entity.setWhat(new Reference(idType));
 
     auditEvent.setEntity(Collections.singletonList(entity));
 
