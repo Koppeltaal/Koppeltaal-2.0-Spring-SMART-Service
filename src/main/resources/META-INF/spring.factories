@@ -23,4 +23,5 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   nl.koppeltaal.spring.boot.starter.smartservice.service.fhir.TaskFhirClientService, \
   nl.koppeltaal.spring.boot.starter.smartservice.service.jwt.JwtValidationService, \
   nl.koppeltaal.spring.boot.starter.smartservice.service.fhir.AuditEventFhirClientService, \
+  nl.koppeltaal.spring.boot.starter.smartservice.service.fhir.SearchService, \
   nl.koppeltaal.spring.boot.starter.smartservice.event.AutomatedAuditEvents

@@ -44,6 +44,8 @@ import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.jose4j.lang.JoseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
@@ -51,6 +53,9 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class SmartClientCredentialService {
+
+	private static final Logger LOG = LoggerFactory.getLogger(SmartClientCredentialService.class);
+
 	public static final String CLIENT_ASSERTION_TYPE = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
 	private final SmartServiceConfiguration smartServiceConfiguration;
 	private final JwksConfiguration jwksConfiguration;
@@ -58,8 +63,6 @@ public class SmartClientCredentialService {
 	private final JwtValidationService jwtValidationService;
 
 	private Oauth2TokenResponse tokenResponse;
-
-	private final Log LOG = LogFactory.getLog(SmartClientCredentialService.class);
 
 	public SmartClientCredentialService(SmartServiceConfiguration smartServiceConfiguration,
 			JwksConfiguration jwksConfiguration,
@@ -105,7 +108,9 @@ public class SmartClientCredentialService {
 		} else {
 			checkCredentials();
 		}
-		return tokenResponse.getAccessToken();
+		final String accessToken = tokenResponse.getAccessToken();
+		LOG.info("New Access Token: \n\n{}", accessToken);
+		return accessToken;
 	}
 
 	public void refreshToken() throws IOException {

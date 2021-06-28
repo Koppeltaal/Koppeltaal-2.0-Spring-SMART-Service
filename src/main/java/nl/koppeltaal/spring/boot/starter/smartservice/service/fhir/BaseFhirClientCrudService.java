@@ -42,22 +42,15 @@ import org.slf4j.LoggerFactory;
  *
  */
 @SuppressWarnings("unchecked")
-public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends DomainResource> {
+public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends DomainResource> extends BaseFhirClientService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AutomatedAuditEvents.class);
 
-	final SmartServiceConfiguration smartServiceConfiguration;
-	final SmartClientCredentialService smartClientCredentialService;
-	final FhirContext fhirContext;
 	final DtoConverter<D, R> dtoConverter;
-	final AuditEventFhirClientService auditEventService;
 
 	public BaseFhirClientCrudService(SmartServiceConfiguration smartServiceConfiguration, SmartClientCredentialService smartClientCredentialService, FhirContext fhirContext, DtoConverter<D, R> dtoConverter, AuditEventFhirClientService auditEventService) {
-		this.smartServiceConfiguration = smartServiceConfiguration;
-		this.smartClientCredentialService = smartClientCredentialService;
-		this.fhirContext = fhirContext;
+		super(smartServiceConfiguration, smartClientCredentialService, fhirContext, auditEventService);
 		this.dtoConverter = dtoConverter;
-		this.auditEventService = auditEventService;
 	}
 
 	public void deleteResource(String id) throws IOException, JwkException {
@@ -177,17 +170,6 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 	}
 
 	protected abstract String getDefaultSystem();
-
-	protected IGenericClient getFhirClient() throws IOException {
-
-		IGenericClient iGenericClient = fhirContext.newRestfulGenericClient(smartServiceConfiguration.getFhirServerUrl());
-
-		iGenericClient.registerInterceptor(new BearerTokenAuthInterceptor(smartClientCredentialService.getAccessToken()));
-
-		return iGenericClient;
-
-
-	}
 
 	protected String getId(DomainResource resource) {
 		IdType idElement = resource.getIdElement();
