@@ -26,6 +26,7 @@ public class SmartServiceConfiguration {
 	String scope = "*/read";
 	String metaSourceUuid;
 	boolean auditEventsEnabled = true;
+	boolean bearerTokenEnabled = true;
 
 	@Bean
 	public FhirContext fhirContext() {
@@ -80,6 +81,14 @@ public class SmartServiceConfiguration {
 		this.auditEventsEnabled = auditEventsEnabled;
 	}
 
+	public boolean isBearerTokenEnabled() {
+		return bearerTokenEnabled;
+	}
+
+	public void setBearerTokenEnabled(boolean bearerTokenEnabled) {
+		this.bearerTokenEnabled = bearerTokenEnabled;
+	}
+
 	@Override
 	public String toString() {
 		return "SmartServiceConfiguration{" +
@@ -88,6 +97,7 @@ public class SmartServiceConfiguration {
 				", scope='" + scope + '\'' +
 				", metaSourceUuid='" + metaSourceUuid + '\'' +
 				", auditEventsEnabled=" + auditEventsEnabled +
+				", bearerTokenEnabled=" + bearerTokenEnabled +
 				'}';
 	}
 

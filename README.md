@@ -23,12 +23,17 @@ fhir.smart.service.fhirServerUrl=https://staging-fhir-server.koppeltaal.headease
 fhir.smart.service.clientId=epd-client-id
 fhir.smart.service.scope=read/*
 fhir.smart.service.auditEventsEnabled=true
+fhir.smart.service.bearerTokenEnabled=true
 fhir.smart.service.metaSourceUuid=urn:uuid:<UUID>
 ```
 
 The  `metaSourceUuid` value will be automatically appended to entities that are created in the FHIR store 
-on the `<Entity>.meta.source` field.  This field should never be changed once used.  It allows to query
-on elements specific to your UUID. For example: "Subsribe to changes for all tasks that have an `ActivityDefinition.meta.source` that equals mine"   
+on the `<Entity>.meta.source` field.  This field should never be changed once used. 
+
+The `bearerTokenEnabled` can be set to `false` to disable registering the `BearerTokenAuthInterceptor`.
+This should generally be left on the default (`true`) but can be set to `false` when developing
+against development environments where there is no auth server
+
 
 _Note: A secret isn't needed as the SMART service  will sign the JWT with credentials
 provided by the JWKS library (through `spring-boot-starter-jwks`)_

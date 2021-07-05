@@ -28,7 +28,11 @@ public abstract class BaseFhirClientService {
 
     IGenericClient iGenericClient = fhirContext.newRestfulGenericClient(smartServiceConfiguration.getFhirServerUrl());
 
-    iGenericClient.registerInterceptor(new BearerTokenAuthInterceptor(smartClientCredentialService.getAccessToken()));
+    if(smartServiceConfiguration.isBearerTokenEnabled()) {
+      iGenericClient.registerInterceptor(new BearerTokenAuthInterceptor(smartClientCredentialService.getAccessToken()));
+    } else {
+      LOG.warn("Bearer token interceptor is disabled, only use this for development environments!");
+    }
 
     return iGenericClient;
   }
