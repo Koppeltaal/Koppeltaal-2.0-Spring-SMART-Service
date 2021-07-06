@@ -13,6 +13,9 @@ package nl.koppeltaal.spring.boot.starter.smartservice.dto;
  */
 @SuppressWarnings("unused")
 public class ActivityDefinitionDto extends BaseIdentifierDto {
+
+	public final static String EXTENSION__PUBLISHER_IDENTIFIER = "https://koppeltaal.nl/publisher-identifier";
+
 	String name;
 	String title;
 	String url;
@@ -22,6 +25,7 @@ public class ActivityDefinitionDto extends BaseIdentifierDto {
 	String location;
 	String code;
 	String topic;
+	String publisherIdentifier;
 
 	public String getCode() {
 		return code;
@@ -93,5 +97,13 @@ public class ActivityDefinitionDto extends BaseIdentifierDto {
 
 	public void setUrl(String url) {
 		this.url = url;
+	}
+
+	public String getPublisherIdentifier() {
+		return publisherIdentifier;
+	}
+
+	public void setPublisherIdentifier(String publisherIdentifier) {
+		this.publisherIdentifier = publisherIdentifier;
 	}
 }

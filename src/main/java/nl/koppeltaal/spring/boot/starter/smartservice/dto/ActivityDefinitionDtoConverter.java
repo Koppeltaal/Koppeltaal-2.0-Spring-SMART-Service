@@ -8,12 +8,16 @@
 
 package nl.koppeltaal.spring.boot.starter.smartservice.dto;
 
+import static nl.koppeltaal.spring.boot.starter.smartservice.dto.ActivityDefinitionDto.EXTENSION__PUBLISHER_IDENTIFIER;
+
 import java.util.Collections;
 import java.util.List;
 import org.hl7.fhir.r4.model.ActivityDefinition;
 import org.hl7.fhir.r4.model.Enumerations;
+import org.hl7.fhir.r4.model.Extension;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Reference;
+import org.hl7.fhir.r4.model.StringType;
 import org.springframework.stereotype.Component;
 
 /**
@@ -30,12 +34,17 @@ public class ActivityDefinitionDtoConverter implements DtoConverter<ActivityDefi
 		activityDefinition.setUrl(activityDefinitionDto.getUrl());
 		activityDefinition.setStatus(Enumerations.PublicationStatus.fromCode(activityDefinitionDto.getStatus()));
 		activityDefinition.setDescription(activityDefinitionDto.getDescription());
+		activityDefinition.setExtension(getExtensions(activityDefinitionDto));
 
 		activityDefinition.setKind(ActivityDefinition.ActivityDefinitionKind.fromCode(activityDefinitionDto.getKind()));
 
 		Reference value = new Reference(activityDefinitionDto.getLocation());
 		value.setType("ActivityDefinition");
 		activityDefinition.setLocation(value);
+	}
+
+	private List<Extension> getExtensions(ActivityDefinitionDto activityDefinitionDto) {
+		return Collections.singletonList(new Extension(EXTENSION__PUBLISHER_IDENTIFIER, new StringType(activityDefinitionDto.getPublisherIdentifier())));
 	}
 
 
@@ -60,6 +69,18 @@ public class ActivityDefinitionDtoConverter implements DtoConverter<ActivityDefi
 		activityDefinitionDto.setKind(kind != null ? kind.toCode() : null);
 		Reference location = activityDefinition.getLocation();
 		activityDefinitionDto.setLocation(location != null ? location.getReference() : null);
+
+		convertExtensions(activityDefinition.getExtension(), activityDefinitionDto);
+
+	}
+
+	private void convertExtensions(List<Extension> extensions, ActivityDefinitionDto activityDefinitionDto) {
+		extensions.forEach(extension -> {
+			switch (extension.getUrl()) {
+				case EXTENSION__PUBLISHER_IDENTIFIER:
+					activityDefinitionDto.setPublisherIdentifier(extension.getValue().toString());
+			}
+		});
 	}
 
 	public ActivityDefinitionDto convert(ActivityDefinition activityDefinition) {
