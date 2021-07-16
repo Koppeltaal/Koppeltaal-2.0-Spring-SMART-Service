@@ -8,8 +8,10 @@
 
 package nl.koppeltaal.spring.boot.starter.smartservice.dto;
 
+import static nl.koppeltaal.spring.boot.starter.smartservice.dto.ActivityDefinitionDto.EXTENSION__ENDPOINT;
 import static nl.koppeltaal.spring.boot.starter.smartservice.dto.ActivityDefinitionDto.EXTENSION__PUBLISHER_IDENTIFIER;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.hl7.fhir.r4.model.ActivityDefinition;
@@ -34,17 +36,21 @@ public class ActivityDefinitionDtoConverter implements DtoConverter<ActivityDefi
 		activityDefinition.setUrl(activityDefinitionDto.getUrl());
 		activityDefinition.setStatus(Enumerations.PublicationStatus.fromCode(activityDefinitionDto.getStatus()));
 		activityDefinition.setDescription(activityDefinitionDto.getDescription());
+
 		activityDefinition.setExtension(getExtensions(activityDefinitionDto));
 
 		activityDefinition.setKind(ActivityDefinition.ActivityDefinitionKind.fromCode(activityDefinitionDto.getKind()));
-
-		Reference value = new Reference(activityDefinitionDto.getLocation());
-		value.setType("ActivityDefinition");
-		activityDefinition.setLocation(value);
 	}
 
 	private List<Extension> getExtensions(ActivityDefinitionDto activityDefinitionDto) {
-		return Collections.singletonList(new Extension(EXTENSION__PUBLISHER_IDENTIFIER, new StringType(activityDefinitionDto.getPublisherIdentifier())));
+
+		Reference endpointReference = new Reference(activityDefinitionDto.getEndpoint());
+		endpointReference.setType("Endpoint");
+
+		return Arrays.asList(
+				new Extension(EXTENSION__PUBLISHER_IDENTIFIER, new StringType(activityDefinitionDto.getPublisherIdentifier())),
+				new Extension(EXTENSION__ENDPOINT, endpointReference)
+		);
 	}
 
 
@@ -67,8 +73,6 @@ public class ActivityDefinitionDtoConverter implements DtoConverter<ActivityDefi
 		activityDefinitionDto.setDescription(activityDefinition.getDescription());
 		ActivityDefinition.ActivityDefinitionKind kind = activityDefinition.getKind();
 		activityDefinitionDto.setKind(kind != null ? kind.toCode() : null);
-		Reference location = activityDefinition.getLocation();
-		activityDefinitionDto.setLocation(location != null ? location.getReference() : null);
 
 		convertExtensions(activityDefinition.getExtension(), activityDefinitionDto);
 
@@ -79,6 +83,10 @@ public class ActivityDefinitionDtoConverter implements DtoConverter<ActivityDefi
 			switch (extension.getUrl()) {
 				case EXTENSION__PUBLISHER_IDENTIFIER:
 					activityDefinitionDto.setPublisherIdentifier(extension.getValue().toString());
+					break;
+				case EXTENSION__ENDPOINT:
+					activityDefinitionDto.setEndpoint(((Reference) extension.getValue()).getReference());
+					break;
 			}
 		});
 	}

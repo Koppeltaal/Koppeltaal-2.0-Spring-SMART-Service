@@ -15,6 +15,7 @@ package nl.koppeltaal.spring.boot.starter.smartservice.dto;
 public class ActivityDefinitionDto extends BaseIdentifierDto {
 
 	public final static String EXTENSION__PUBLISHER_IDENTIFIER = "https://koppeltaal.nl/publisher-identifier";
+	public final static String EXTENSION__ENDPOINT = "http://example.org/fhir/StructureDefinition/KT2_EndpointExtension";
 
 	String name;
 	String title;
@@ -22,7 +23,7 @@ public class ActivityDefinitionDto extends BaseIdentifierDto {
 	String status;
 	String description;
 	String kind;
-	String location;
+	String endpoint;
 	String code;
 	String topic;
 	String publisherIdentifier;
@@ -51,12 +52,12 @@ public class ActivityDefinitionDto extends BaseIdentifierDto {
 		this.kind = kind;
 	}
 
-	public String getLocation() {
-		return location;
+	public String getEndpoint() {
+		return endpoint;
 	}
 
-	public void setLocation(String location) {
-		this.location = location;
+	public void setEndpoint(String endpoint) {
+		this.endpoint = endpoint;
 	}
 
 	public String getName() {
