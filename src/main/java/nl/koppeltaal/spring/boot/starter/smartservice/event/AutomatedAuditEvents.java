@@ -3,8 +3,8 @@ package nl.koppeltaal.spring.boot.starter.smartservice.event;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.CompletableFuture;
 import javax.annotation.PreDestroy;
+import nl.koppeltaal.spring.boot.starter.smartservice.configuration.SmartServiceConfiguration;
 import nl.koppeltaal.spring.boot.starter.smartservice.service.fhir.AuditEventFhirClientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,14 +24,18 @@ import org.springframework.stereotype.Component;
 public class AutomatedAuditEvents {
   private static final Logger LOG = LoggerFactory.getLogger(AutomatedAuditEvents.class);
   private final AuditEventFhirClientService auditEventService;
+  private final SmartServiceConfiguration smartServiceConfiguration;
 
-  public AutomatedAuditEvents(AuditEventFhirClientService auditEventService) {
+  public AutomatedAuditEvents(AuditEventFhirClientService auditEventService,
+      SmartServiceConfiguration smartServiceConfiguration) {
     this.auditEventService = auditEventService;
+    this.smartServiceConfiguration = smartServiceConfiguration;
   }
 
   @EventListener(ApplicationReadyEvent.class)
-  @ConditionalOnProperty(value = "fhir.smart.service.auditEventsEnabled", havingValue = "true")
   public void registerServerStartup() {
+
+    if(!smartServiceConfiguration.isAuditEventsEnabled())  return;
 
     /*
      * Start in a new thread as it can happen that the registration fails at the start
@@ -57,8 +61,8 @@ public class AutomatedAuditEvents {
   }
 
   @PreDestroy
-  @ConditionalOnProperty(value = "fhir.smart.service.auditEventsEnabled", havingValue = "true")
   public void registerServerShutdown() throws IOException {
-    auditEventService.registerServerShutdown();
+
+    if(smartServiceConfiguration.isAuditEventsEnabled()) auditEventService.registerServerShutdown();
   }
 }
