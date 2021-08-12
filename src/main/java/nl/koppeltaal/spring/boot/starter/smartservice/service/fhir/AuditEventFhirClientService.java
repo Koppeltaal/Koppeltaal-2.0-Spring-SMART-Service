@@ -49,6 +49,8 @@ public class AuditEventFhirClientService extends BaseFhirClientCrudService<Audit
 
   public AuditEvent registerServerStartup() throws IOException {
 
+    if(!smartServiceConfiguration.isAuditEventsEnabled()) return null;
+
     LOG.info("Attempting to write server startup AuditEvent to the FHIR store");
 
     final Coding type = AuditEventType.APPLICATION_ACTIVITY.getCoding();
@@ -60,6 +62,8 @@ public class AuditEventFhirClientService extends BaseFhirClientCrudService<Audit
   }
 
   public AuditEvent registerServerShutdown() throws IOException {
+
+    if(!smartServiceConfiguration.isAuditEventsEnabled()) return null;
 
     LOG.info("Attempting to write server shutdown AuditEvent to the FHIR store");
 
@@ -83,6 +87,8 @@ public class AuditEventFhirClientService extends BaseFhirClientCrudService<Audit
    */
   public AuditEvent registerRestCreate(DomainResource resource) throws IOException {
 
+    if(!smartServiceConfiguration.isAuditEventsEnabled()) return null;
+
     final Coding subType = AuditEventSubType.RESTFUL_INTERACTION__CREATE.getCoding();
     return registerRestOperation(resource, subType, AuditEventAction.C);
   }
@@ -93,11 +99,16 @@ public class AuditEventFhirClientService extends BaseFhirClientCrudService<Audit
    */
   public AuditEvent registerRestUpdate(DomainResource resource) throws IOException {
 
+    if(!smartServiceConfiguration.isAuditEventsEnabled()) return null;
+
     final Coding subType = AuditEventSubType.RESTFUL_INTERACTION__UPDATE.getCoding();
     return registerRestOperation(resource, subType, AuditEventAction.U);
   }
 
   public AuditEvent registerRestDelete(IIdType idType) throws IOException {
+
+    if(!smartServiceConfiguration.isAuditEventsEnabled()) return null;
+
     final Coding subType = AuditEventSubType.RESTFUL_INTERACTION__DELETE.getCoding();
     return registerRestOperation(idType, subType, AuditEventAction.D);
   }
