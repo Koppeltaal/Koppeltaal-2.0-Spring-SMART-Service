@@ -37,7 +37,7 @@ public class ActivityDefinitionDtoConverter implements DtoConverter<ActivityDefi
 		activityDefinition.setStatus(Enumerations.PublicationStatus.fromCode(activityDefinitionDto.getStatus()));
 		activityDefinition.setDescription(activityDefinitionDto.getDescription());
 
-		activityDefinition.setExtension(getExtensions(activityDefinitionDto));
+		activityDefinition.getExtension().addAll(getExtensions(activityDefinitionDto));
 
 		activityDefinition.setKind(ActivityDefinition.ActivityDefinitionKind.fromCode(activityDefinitionDto.getKind()));
 	}
@@ -75,7 +75,6 @@ public class ActivityDefinitionDtoConverter implements DtoConverter<ActivityDefi
 		activityDefinitionDto.setKind(kind != null ? kind.toCode() : null);
 
 		convertExtensions(activityDefinition.getExtension(), activityDefinitionDto);
-
 	}
 
 	private void convertExtensions(List<Extension> extensions, ActivityDefinitionDto activityDefinitionDto) {
