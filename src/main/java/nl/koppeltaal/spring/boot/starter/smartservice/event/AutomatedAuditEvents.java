@@ -25,6 +25,8 @@ public class AutomatedAuditEvents {
   private static final Logger LOG = LoggerFactory.getLogger(AutomatedAuditEvents.class);
   private final AuditEventFhirClientService auditEventService;
   private final SmartServiceConfiguration smartServiceConfiguration;
+  private int retryCount = 0;
+  private final static int MAX_RETRY_COUNT = 30;
 
   public AutomatedAuditEvents(AuditEventFhirClientService auditEventService,
       SmartServiceConfiguration smartServiceConfiguration) {
@@ -35,7 +37,7 @@ public class AutomatedAuditEvents {
   @EventListener(ApplicationReadyEvent.class)
   public void registerServerStartup() {
 
-    if(!smartServiceConfiguration.isAuditEventsEnabled())  return;
+    if(!smartServiceConfiguration.isAuditEventsEnabled()) return;
 
     /*
      * Start in a new thread as it can happen that the registration fails at the start
@@ -52,7 +54,10 @@ public class AutomatedAuditEvents {
           auditEventService.registerServerStartup();
           this.cancel(); //succeeded, task can stop
         } catch (Exception e) {
-          LOG.warn("Unable to send server startup audit event, message: [{}]", e.getMessage());
+          LOG.warn("Unable to send server startup audit event, message: [{}].  Attempt [{}] of [{}]", e.getMessage(), retryCount, MAX_RETRY_COUNT);
+
+          if(retryCount >= MAX_RETRY_COUNT) this.cancel();
+          else retryCount++;
         }
       }
     };
