@@ -16,6 +16,7 @@ import ca.uhn.fhir.rest.client.interceptor.BearerTokenAuthInterceptor;
 import ca.uhn.fhir.rest.gclient.ICriterion;
 import ca.uhn.fhir.rest.gclient.IQuery;
 import ca.uhn.fhir.rest.gclient.TokenClientParam;
+import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import com.auth0.jwk.JwkException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -144,26 +145,34 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 			res = getResourceByIdentifier(identifier, getDefaultSystem());
 		}
 
+		final R updatedEntity;
+		try {
+			if (res != null) {
+				dtoConverter.applyDto(res, dtoConverter.convert(resource));
+				MethodOutcome execute = getFhirClient().update().resource(res).execute();
+				updatedEntity = (R) execute.getResource();
 
-		if (res != null) {
-			dtoConverter.applyDto(res, dtoConverter.convert(resource));
-			MethodOutcome execute = getFhirClient().update().resource(res).execute();
-			final R updatedEntity = (R) execute.getResource();
-
-			LOG.info("Updated entity [{}]", updatedEntity.getIdElement());
-			if(!FHIRAllTypes.AUDITEVENT.getDisplay().equals(getResourceName())) {
-				auditEventService.registerRestUpdate(updatedEntity);
+				LOG.info("Updated entity [{}]", updatedEntity.getIdElement());
+				if(!FHIRAllTypes.AUDITEVENT.getDisplay().equals(getResourceName())) {
+					auditEventService.registerRestUpdate(updatedEntity);
+				}
+				return updatedEntity;
 			}
-			return updatedEntity;
-		}
 
-		updateMetaElement(resource);
-		MethodOutcome execute = getFhirClient().create().resource(resource).execute();
-		final R updatedEntity = (R) execute.getResource();
-		LOG.info("Created entity [{}]", updatedEntity.getIdElement());
+			updateMetaElement(resource);
+			MethodOutcome execute = getFhirClient().create().resource(resource).execute();
+			updatedEntity = (R) execute.getResource();
+			LOG.info("Created entity [{}]", updatedEntity.getIdElement());
 
-		if(!FHIRAllTypes.AUDITEVENT.getDisplay().equals(getResourceName())) {
-			auditEventService.registerRestCreate(updatedEntity);
+			if(!FHIRAllTypes.AUDITEVENT.getDisplay().equals(getResourceName())) {
+				auditEventService.registerRestCreate(updatedEntity);
+			}
+		} catch (UnprocessableEntityException e) {
+
+			LOG.error("Failed to validate resource [{}] and id [{}] with the following message: {}",
+					resource.getClass().getName(), id, e.getResponseBody());
+
+			throw e;
 		}
 
 		return updatedEntity;
