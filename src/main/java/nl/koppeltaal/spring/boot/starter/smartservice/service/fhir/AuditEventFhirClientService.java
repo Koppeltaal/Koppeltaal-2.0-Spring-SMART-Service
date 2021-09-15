@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r4.model.AuditEvent;
 import org.hl7.fhir.r4.model.AuditEvent.AuditEventAction;
+import org.hl7.fhir.r4.model.AuditEvent.AuditEventAgentComponent;
 import org.hl7.fhir.r4.model.AuditEvent.AuditEventEntityComponent;
 import org.hl7.fhir.r4.model.AuditEvent.AuditEventSourceComponent;
 import org.hl7.fhir.r4.model.Coding;
@@ -145,6 +146,12 @@ public class AuditEventFhirClientService extends BaseFhirClientCrudService<Audit
 
     final AuditEvent auditEvent = new AuditEvent(type, date, source);
     auditEvent.setSubtype(Collections.singletonList(subType));
+
+    final AuditEventAgentComponent agent = new AuditEventAgentComponent();
+    //TODO: Add a Config object to populate the agent with more useful data.
+    agent.setRequestor(true);
+    auditEvent.setAgent(Collections.singletonList(agent));
+
     return auditEvent;
   }
 
