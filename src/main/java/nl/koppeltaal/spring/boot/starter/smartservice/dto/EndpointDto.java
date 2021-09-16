@@ -1,5 +1,7 @@
 package nl.koppeltaal.spring.boot.starter.smartservice.dto;
 
+import java.util.List;
+
 /**
  *
  */
@@ -8,8 +10,8 @@ public class EndpointDto extends BaseDto {
 	String name;
 	String address;
 	String status;
-	String connectionType;
-	String payloadType;
+	CodingDto connectionType;
+	List<CodeableConceptDto> payloadType;
 	String managingOrganization;
 
 	public String getAddress() {
@@ -20,11 +22,11 @@ public class EndpointDto extends BaseDto {
 		this.address = address;
 	}
 
-	public String getConnectionType() {
+	public CodingDto getConnectionType() {
 		return connectionType;
 	}
 
-	public void setConnectionType(String connectionType) {
+	public void setConnectionType(CodingDto connectionType) {
 		this.connectionType = connectionType;
 	}
 
@@ -44,11 +46,11 @@ public class EndpointDto extends BaseDto {
 		this.name = name;
 	}
 
-	public String getPayloadType() {
+	public List<CodeableConceptDto> getPayloadType() {
 		return payloadType;
 	}
 
-	public void setPayloadType(String payloadType) {
+	public void setPayloadType(List<CodeableConceptDto> payloadType) {
 		this.payloadType = payloadType;
 	}
 

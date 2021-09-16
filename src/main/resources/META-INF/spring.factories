@@ -11,6 +11,8 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   nl.koppeltaal.spring.boot.starter.smartservice.dto.SubscriptionDtoConverter, \
   nl.koppeltaal.spring.boot.starter.smartservice.dto.TaskDtoConverter, \
   nl.koppeltaal.spring.boot.starter.smartservice.dto.AuditEventDtoConverter, \
+  nl.koppeltaal.spring.boot.starter.smartservice.dto.CodeableConceptDtoConverter, \
+  nl.koppeltaal.spring.boot.starter.smartservice.dto.CodingDtoConverter, \
   nl.koppeltaal.spring.boot.starter.smartservice.service.fhir.ActivityDefinitionFhirClientService, \
   nl.koppeltaal.spring.boot.starter.smartservice.service.fhir.EndpointFhirClientService, \
   nl.koppeltaal.spring.boot.starter.smartservice.service.fhir.FhirCapabilitiesService, \

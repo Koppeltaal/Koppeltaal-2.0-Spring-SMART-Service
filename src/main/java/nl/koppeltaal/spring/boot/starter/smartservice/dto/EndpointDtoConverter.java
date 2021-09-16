@@ -8,7 +8,10 @@
 
 package nl.koppeltaal.spring.boot.starter.smartservice.dto;
 
-import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.hl7.fhir.r4.model.CodeableConcept;
+import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.Endpoint;
 import org.springframework.stereotype.Component;
 
@@ -18,13 +21,24 @@ import org.springframework.stereotype.Component;
 @Component
 public class EndpointDtoConverter implements DtoConverter<EndpointDto, Endpoint> {
 
+	private final CodingDtoConverter codingConverter;
+	private final CodeableConceptDtoConverter codeableConceptConverter;
+
+	public EndpointDtoConverter(CodingDtoConverter codingConverter,
+			CodeableConceptDtoConverter codeableConceptConverter) {
+		this.codingConverter = codingConverter;
+		this.codeableConceptConverter = codeableConceptConverter;
+	}
+
 	public void applyDto(Endpoint endpoint, EndpointDto endpointDto) {
 		setId(endpoint, endpointDto);
-		endpoint.setIdentifier(Collections.singletonList(createIdentifier("urn:ietf:rfc:3986", endpointDto.getAddress())));
 		// TODO: implement the rest
 		endpoint.setAddress(endpointDto.getAddress());
 		endpoint.setName(endpointDto.getName());
 		endpoint.setStatus(Endpoint.EndpointStatus.fromCode(endpointDto.getStatus()));
+
+		endpoint.setConnectionType(codingConverter.convert(endpointDto.getConnectionType()));
+		endpoint.setPayloadType(codeableConceptConverter.convertDtos(endpointDto.getPayloadType()));
 	}
 
 
@@ -34,8 +48,8 @@ public class EndpointDtoConverter implements DtoConverter<EndpointDto, Endpoint>
 		endpointDto.setAddress(endpoint.getAddress());
 		endpointDto.setName(endpoint.getName());
 		endpointDto.setStatus(endpoint.getStatus().toCode());
-
-
+		endpointDto.setConnectionType(codingConverter.convert(endpoint.getConnectionType()));
+		endpointDto.setPayloadType(codeableConceptConverter.convert(endpoint.getPayloadType()));
 	}
 
 	public EndpointDto convert(Endpoint endpoint) {
