@@ -8,6 +8,7 @@ import org.hl7.fhir.r4.model.Subscription;
 public class SubscriptionDto extends BaseDto {
 	String id;
 	String criteria;
+	String reason;
 	Subscription.SubscriptionChannelType type;
 	Subscription.SubscriptionStatus status;
 	String endpoint;
@@ -28,6 +29,14 @@ public class SubscriptionDto extends BaseDto {
 
 	public void setCriteria(String criteria) {
 		this.criteria = criteria;
+	}
+
+	public String getReason() {
+		return reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
 	}
 
 	public Subscription.SubscriptionChannelType getType() {
@@ -68,5 +77,19 @@ public class SubscriptionDto extends BaseDto {
 
 	public void setPayload(String payload) {
 		this.payload = payload;
+	}
+
+	@Override
+	public String toString() {
+		return "SubscriptionDto{" +
+				"id='" + id + '\'' +
+				", criteria='" + criteria + '\'' +
+				", reason='" + reason + '\'' +
+				", type=" + type +
+				", status=" + status +
+				", endpoint='" + endpoint + '\'' +
+				", header='" + header + '\'' +
+				", payload='" + payload + '\'' +
+				"} " + super.toString();
 	}
 }

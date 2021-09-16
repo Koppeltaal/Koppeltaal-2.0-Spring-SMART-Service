@@ -26,6 +26,7 @@ public class SubscriptionDtoConverter implements DtoConverter<SubscriptionDto, S
 		subscription.setStatus(subscriptionDto.getStatus());
 		subscription.setCriteria(subscriptionDto.getCriteria());
 		subscription.setChannel(getChannel(subscriptionDto));
+		subscription.setReason(subscriptionDto.getReason());
 	}
 
 	public SubscriptionDto convert(Subscription subscription) {
@@ -35,6 +36,7 @@ public class SubscriptionDtoConverter implements DtoConverter<SubscriptionDto, S
 
 		subscriptionDto.setStatus(subscription.getStatus());
 		subscriptionDto.setCriteria(subscription.getCriteria());
+		subscriptionDto.setReason(subscription.getReason());
 
 		final Subscription.SubscriptionChannelComponent channel = subscription.getChannel();
 
