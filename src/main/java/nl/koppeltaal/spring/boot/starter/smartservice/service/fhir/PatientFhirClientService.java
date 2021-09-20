@@ -30,7 +30,7 @@ public class PatientFhirClientService extends BaseFhirClientCrudService<PatientD
 		return "Patient";
 	}
 	protected String getDefaultSystem() {
-		return "IRMA";
+		return "https://irma.app/email";
 	}
 
 

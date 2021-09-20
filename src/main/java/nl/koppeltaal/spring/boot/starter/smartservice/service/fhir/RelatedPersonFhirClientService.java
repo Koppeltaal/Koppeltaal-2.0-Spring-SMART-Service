@@ -27,7 +27,7 @@ public class RelatedPersonFhirClientService extends BaseFhirClientCrudService<Re
 
 	@Override
 	protected String getDefaultSystem() {
-		return "IRMA";
+		return "https://irma.app/email";
 	}
 
 	@Override

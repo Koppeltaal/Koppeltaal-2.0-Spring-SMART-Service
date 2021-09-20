@@ -27,7 +27,7 @@ public class PractitionerFhirClientService extends BaseFhirClientCrudService<Pra
 
 	@Override
 	protected String getDefaultSystem() {
-		return "IRMA";
+		return "https://irma.app/email";
 	}
 
 	@Override
