@@ -59,7 +59,7 @@ public class TaskFhirClientService extends BaseFhirClientCrudService<TaskDto, Ta
 			task.setIntent(Task.TaskIntent.ORDER);
 			task.getRestriction().addRecipient(buildReference(practitioner));
 			task.getExecutionPeriod().setStart(new Date());
-			task.setInstantiatesCanonical(ResourceUtils.getReference(activityDefinition));
+			task.setInstantiatesCanonical(ResourceUtils.getCanonicalReference(activityDefinition));
 			task = storeResource(task);
 		} else {
 			task = tasks.get(0);
@@ -118,7 +118,7 @@ public class TaskFhirClientService extends BaseFhirClientCrudService<TaskDto, Ta
 		List<Task> rv = new ArrayList<>();
 		List<Task> resourcesByOwner = getResourcesByOwner(ResourceUtils.getReference(fhirPatient));
 		for (Task task : resourcesByOwner) {
-			if (StringUtils.equals(task.getInstantiatesCanonical(), ResourceUtils.getReference(fhirDefinition))) {
+			if (StringUtils.equals(task.getInstantiatesCanonical(), ResourceUtils.getCanonicalReference(fhirDefinition))) {
 				rv.add(task);
 			}
 		}

@@ -14,4 +14,9 @@ public class ResourceUtils {
 		}
 		return null;
 	}
+
+	public static String getCanonicalReference(IAnyResource resource) {
+		IIdType idElement = resource.getIdElement();
+		return (idElement != null) ? idElement.getValue() : null;
+	}
 }
