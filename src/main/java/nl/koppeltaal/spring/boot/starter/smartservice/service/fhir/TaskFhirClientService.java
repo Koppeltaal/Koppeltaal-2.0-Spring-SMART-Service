@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import nl.koppeltaal.spring.boot.starter.smartservice.configuration.SmartServiceConfiguration;
 import nl.koppeltaal.spring.boot.starter.smartservice.dto.TaskDto;
 import nl.koppeltaal.spring.boot.starter.smartservice.dto.TaskDtoConverter;
@@ -26,6 +27,8 @@ import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r4.model.ActivityDefinition;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.IdType;
+import org.hl7.fhir.r4.model.Identifier;
+import org.hl7.fhir.r4.model.Meta;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.Reference;
@@ -44,6 +47,10 @@ public class TaskFhirClientService extends BaseFhirClientCrudService<TaskDto, Ta
 	}
 
 	public Task getOrCreateTask(Patient patient, Practitioner practitioner, ActivityDefinition activityDefinition, boolean forceNew) throws IOException, JwkException {
+		return getOrCreateTask(patient, practitioner, activityDefinition, forceNew, null);
+	}
+
+	public Task getOrCreateTask(Patient patient, Practitioner practitioner, ActivityDefinition activityDefinition, boolean forceNew, Identifier taskIdentifier) throws IOException, JwkException {
 		List<Task> tasks =  Collections.emptyList();
 		if (!forceNew) {
 			tasks = getTasksForOwnerAndDefinition(patient, activityDefinition);
@@ -51,6 +58,18 @@ public class TaskFhirClientService extends BaseFhirClientCrudService<TaskDto, Ta
 		Task task;
 		if (tasks.isEmpty()) {
 			task = new Task();
+
+			final Meta meta = new Meta();
+			meta.addProfile("http://example.org/fhir/StructureDefinition/KT2Task");
+			task.setMeta(meta);
+
+			if(taskIdentifier == null) {
+				taskIdentifier = new Identifier();
+				taskIdentifier.setSystem("https://poc-portal.koppeltaal.headease.nl");
+				taskIdentifier.setValue(UUID.randomUUID().toString());
+			}
+			task.addIdentifier(taskIdentifier);
+
 			task.setOwner(buildReference(patient));
 			if (practitioner != null) {
 				task.setRequester(buildReference(practitioner));
