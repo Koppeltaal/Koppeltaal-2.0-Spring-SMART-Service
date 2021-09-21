@@ -11,12 +11,10 @@ package nl.koppeltaal.spring.boot.starter.smartservice.service.fhir;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.SortSpec;
-import ca.uhn.fhir.rest.client.api.IGenericClient;
-import ca.uhn.fhir.rest.client.interceptor.BearerTokenAuthInterceptor;
 import ca.uhn.fhir.rest.gclient.ICriterion;
 import ca.uhn.fhir.rest.gclient.IQuery;
 import ca.uhn.fhir.rest.gclient.TokenClientParam;
-import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
+import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import com.auth0.jwk.JwkException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -167,7 +165,7 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 			if(!FHIRAllTypes.AUDITEVENT.getDisplay().equals(getResourceName())) {
 				auditEventService.registerRestCreate(updatedEntity);
 			}
-		} catch (UnprocessableEntityException e) {
+		} catch (BaseServerResponseException e) {
 
 			LOG.error("Failed to validate resource [{}] and id [{}] with the following message: {}",
 					resource.getClass().getName(), id, e.getResponseBody());
