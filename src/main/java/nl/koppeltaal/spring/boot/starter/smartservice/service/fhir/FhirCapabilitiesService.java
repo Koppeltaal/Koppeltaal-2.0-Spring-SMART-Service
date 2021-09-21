@@ -49,4 +49,22 @@ public class FhirCapabilitiesService {
 		}
 		return null;
 	}
+	public String getAuthorizeUrl() {
+		IGenericClient client = fhirContext.newRestfulGenericClient(smartServiceConfiguration.getFhirServerUrl());
+		IFetchConformanceUntyped capabilities = client.capabilities();
+		IFetchConformanceTyped<CapabilityStatement> conformanceTyped = capabilities.ofType(CapabilityStatement.class);
+		CapabilityStatement capabilityStatement = conformanceTyped.execute();
+		List<CapabilityStatement.CapabilityStatementRestComponent> rest = capabilityStatement.getRest();
+		for (CapabilityStatement.CapabilityStatementRestComponent capabilityStatementRestComponent : rest) {
+			List<Extension> extensionsByUrl = capabilityStatementRestComponent.getSecurity().getExtensionsByUrl("http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris");
+			for (Extension extension : extensionsByUrl) {
+				Extension token = extension.getExtensionByUrl("authorize");
+				if (token != null) {
+					return token.getValue().primitiveValue();
+				}
+
+			}
+		}
+		return null;
+	}
 }
