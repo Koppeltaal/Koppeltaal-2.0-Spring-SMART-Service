@@ -83,12 +83,11 @@ public class JwtValidationService {
 		// Decode and verify the token.
 		Verification verification = JWT.require(algorithm)
 				.withIssuer(issuer) // Make sure to require yourself to be the audience.
-				.acceptLeeway(0);
+				.acceptLeeway(leeway);
 		if (StringUtils.isNotEmpty(audience)) {
 			verification = verification.withAudience(audience); // Make sure to require yourself to be the audience.
 		}
 		return verification
-				.acceptLeeway(leeway)
 				.build()
 				.verify(token);
 	}

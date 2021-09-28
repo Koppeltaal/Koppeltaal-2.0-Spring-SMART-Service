@@ -76,7 +76,7 @@ public class SmartClientCredentialService {
 	public void checkCredentials() throws IOException {
 		try {
 			if (tokenResponse != null) {
-				jwtValidationService.validate(tokenResponse.getAccessToken(), null, 60);
+				jwtValidationService.validate(tokenResponse.getAccessToken(), null, 0);
 			}
 		} catch (JwkException | JWTVerificationException e) {
 			try {
