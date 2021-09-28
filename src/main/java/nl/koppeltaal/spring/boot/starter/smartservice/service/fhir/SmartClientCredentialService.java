@@ -80,7 +80,7 @@ public class SmartClientCredentialService {
 			}
 		} catch (JwkException | JWTVerificationException e) {
 			try {
-				refreshToken();
+				fetchToken();
 			} catch (IOException ex) {
 				LOG.warn("Got error during refresh, restart and fetch a new token.");
 				fetchToken();
@@ -109,21 +109,8 @@ public class SmartClientCredentialService {
 			checkCredentials();
 		}
 		final String accessToken = tokenResponse.getAccessToken();
-		LOG.info("New Access Token: \n\n{}", accessToken);
+		LOG.info("Using Access Token: \n\n{}", accessToken);
 		return accessToken;
-	}
-
-	public void refreshToken() throws IOException {
-		String tokenUrl = fhirCapabilitiesService.getTokenUrl();
-		try (CloseableHttpClient httpClient = createHttpClient()) {
-
-			List<NameValuePair> params = new ArrayList<>();
-			params.add(new BasicNameValuePair("grant_type", "refresh_token"));
-			params.add(new BasicNameValuePair("refresh_token", tokenResponse.getRefreshToken()));
-			params.add(new BasicNameValuePair("scope", smartServiceConfiguration.getScope()));
-
-			postTokenRequest(tokenUrl, httpClient, params);
-		}
 	}
 
 	public String getSmartServiceClientAssertion(String oauthTokenEndpoint) {

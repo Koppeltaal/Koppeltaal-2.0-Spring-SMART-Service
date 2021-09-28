@@ -1,8 +1,9 @@
 package nl.koppeltaal.spring.boot.starter.smartservice.service.fhir;
 
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.rest.client.api.IGenericClient;
-import ca.uhn.fhir.rest.client.interceptor.BearerTokenAuthInterceptor;
+import ca.uhn.fhir.rest.api.Constants;
+import ca.uhn.fhir.rest.client.api.*;
+
 import java.io.IOException;
 import nl.koppeltaal.spring.boot.starter.smartservice.configuration.SmartServiceConfiguration;
 import org.slf4j.Logger;
@@ -17,6 +18,8 @@ public abstract class BaseFhirClientService {
   final FhirContext fhirContext;
   final AuditEventFhirClientService auditEventService;
 
+  static IGenericClient iGenericClient;
+
   protected BaseFhirClientService(SmartServiceConfiguration smartServiceConfiguration, SmartClientCredentialService smartClientCredentialService, FhirContext fhirContext, AuditEventFhirClientService auditEventService) {
     this.smartServiceConfiguration = smartServiceConfiguration;
     this.smartClientCredentialService = smartClientCredentialService;
@@ -24,12 +27,29 @@ public abstract class BaseFhirClientService {
     this.auditEventService = auditEventService;
   }
 
-  protected IGenericClient getFhirClient() throws IOException {
+  protected IGenericClient getFhirClient() {
+    if (iGenericClient != null) {
+      return iGenericClient;
+    }
 
-    IGenericClient iGenericClient = fhirContext.newRestfulGenericClient(smartServiceConfiguration.getFhirServerUrl());
+    iGenericClient = fhirContext.newRestfulGenericClient(smartServiceConfiguration.getFhirServerUrl());
 
     if(smartServiceConfiguration.isBearerTokenEnabled()) {
-      iGenericClient.registerInterceptor(new BearerTokenAuthInterceptor(smartClientCredentialService.getAccessToken()));
+      iGenericClient.registerInterceptor(new IClientInterceptor(){
+        @Override
+       	public void interceptRequest(IHttpRequest theRequest) {
+       		try {
+       			theRequest.addHeader(Constants.HEADER_AUTHORIZATION, (Constants.HEADER_AUTHORIZATION_VALPREFIX_BEARER + smartClientCredentialService.getAccessToken()));
+       		} catch (IOException e) {
+       			throw new RuntimeException(e);
+       		}
+       	}
+
+        @Override
+        public void interceptResponse(IHttpResponse theResponse) {
+
+        }
+      });
     } else {
       LOG.warn("Bearer token interceptor is disabled, only use this for development environments!");
     }
