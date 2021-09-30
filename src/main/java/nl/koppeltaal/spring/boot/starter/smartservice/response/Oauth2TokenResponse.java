@@ -4,13 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.Serializable;
 
 /**
- *
+ * Can be serialized with the OAuth2 client_credentials response
  */
 public class Oauth2TokenResponse implements Serializable {
+
+	String scope;
 	@JsonProperty(value = "access_token")
 	String accessToken;
-	@JsonProperty("refresh_token")
-	String refreshToken;
 	@JsonProperty("token_type")
 	String tokenType;
 	@JsonProperty("expires_in")
@@ -32,12 +32,12 @@ public class Oauth2TokenResponse implements Serializable {
 		this.expiresIn = expiresIn;
 	}
 
-	public String getRefreshToken() {
-		return refreshToken;
+	public String getScope() {
+		return scope;
 	}
 
-	public void setRefreshToken(String refreshToken) {
-		this.refreshToken = refreshToken;
+	public void setScope(String scope) {
+		this.scope = scope;
 	}
 
 	public String getTokenType() {
@@ -46,5 +46,15 @@ public class Oauth2TokenResponse implements Serializable {
 
 	public void setTokenType(String tokenType) {
 		this.tokenType = tokenType;
+	}
+
+	@Override
+	public String toString() {
+		return "Oauth2TokenResponse{" +
+				"accessToken='" + accessToken + '\'' +
+				", scope='" + scope + '\'' +
+				", tokenType='" + tokenType + '\'' +
+				", expiresIn='" + expiresIn + '\'' +
+				'}';
 	}
 }
