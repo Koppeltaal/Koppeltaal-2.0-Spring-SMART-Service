@@ -8,6 +8,7 @@
 
 package nl.koppeltaal.spring.boot.starter.smartservice.dto;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,6 +31,7 @@ public class CareTeamDtoConverter implements DtoConverter<CareTeamDto, CareTeam>
 		careTeam.setName(careTeamDto.getName());
 		careTeam.setStatus(careTeamDto.getStatus());
 
+		careTeam.setParticipant(new ArrayList<>());
 		for (String participantReference : careTeamDto.getParticipants()) {
 
 			final CareTeamParticipantComponent participantComponent = new CareTeamParticipantComponent();
