@@ -10,6 +10,7 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   nl.koppeltaal.spring.boot.starter.smartservice.dto.RelatedPersonDtoConverter, \
   nl.koppeltaal.spring.boot.starter.smartservice.dto.SubscriptionDtoConverter, \
   nl.koppeltaal.spring.boot.starter.smartservice.dto.TaskDtoConverter, \
+  nl.koppeltaal.spring.boot.starter.smartservice.dto.CareTeamDtoConverter, \
   nl.koppeltaal.spring.boot.starter.smartservice.dto.AuditEventDtoConverter, \
   nl.koppeltaal.spring.boot.starter.smartservice.dto.CodeableConceptDtoConverter, \
   nl.koppeltaal.spring.boot.starter.smartservice.dto.CodingDtoConverter, \
@@ -25,6 +26,7 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   nl.koppeltaal.spring.boot.starter.smartservice.service.fhir.SmartClientCredentialService, \
   nl.koppeltaal.spring.boot.starter.smartservice.service.fhir.SubscriptionFhirClientService, \
   nl.koppeltaal.spring.boot.starter.smartservice.service.fhir.TaskFhirClientService, \
+  nl.koppeltaal.spring.boot.starter.smartservice.service.fhir.CareTeamFhirClientService, \
   nl.koppeltaal.spring.boot.starter.smartservice.service.jwt.JwtValidationService, \
   nl.koppeltaal.spring.boot.starter.smartservice.service.fhir.AuditEventFhirClientService, \
   nl.koppeltaal.spring.boot.starter.smartservice.service.fhir.SearchService, \
