@@ -1,5 +1,8 @@
 package nl.koppeltaal.spring.boot.starter.smartservice.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  */
@@ -9,6 +12,7 @@ public class TaskDto extends BaseDto {
 	String patient;
 	String practitioner;
 	String status;
+	List<String> observerReferences = new ArrayList<>();
 
 	public String getActivityDefinition() {
 		return activityDefinition;
@@ -40,5 +44,14 @@ public class TaskDto extends BaseDto {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public List<String> getObserverReferences() {
+		return observerReferences;
+	}
+
+	public void setObserverReferences(
+			List<String> observerReferences) {
+		this.observerReferences = observerReferences;
 	}
 }
