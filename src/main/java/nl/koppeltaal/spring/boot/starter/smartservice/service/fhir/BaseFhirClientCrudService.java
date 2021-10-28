@@ -9,6 +9,7 @@
 package nl.koppeltaal.spring.boot.starter.smartservice.service.fhir;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.model.api.IQueryParameterType;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.SortSpec;
 import ca.uhn.fhir.rest.gclient.ICriterion;
@@ -21,6 +22,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import nl.koppeltaal.spring.boot.starter.smartservice.configuration.SmartServiceConfiguration;
 import nl.koppeltaal.spring.boot.starter.smartservice.dto.BaseDto;
 import nl.koppeltaal.spring.boot.starter.smartservice.dto.DtoConverter;
@@ -70,20 +72,20 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 		}
 	}
 
-	public R getResourceByIdentifier(Identifier identifier) throws IOException, JwkException {
+	public R getResourceByIdentifier(Identifier identifier) {
 		String system = StringUtils.isNotEmpty(identifier.getSystem()) ? identifier.getSystem() : getDefaultSystem();
 		return getResourceByIdentifier(system, identifier.getValue());
 	}
 
-	public R getResourceByIdentifier(String identifierValue) throws IOException{
+	public R getResourceByIdentifier(String identifierValue) {
 		return getResourceByIdentifier(identifierValue, getDefaultSystem());
 	}
 
-	public R getResourceByReference(String reference) throws IOException {
+	public R getResourceByReference(String reference) {
 		return (R) getFhirClient().read().resource(getResourceName()).withId(reference).execute();
 	}
 
-	public R getResourceByReference(Reference reference) throws IOException, JwkException {
+	public R getResourceByReference(Reference reference) {
 		String ref = reference.getReference();
 		if (StringUtils.isNotEmpty(ref)) {
 			return getResourceByReference(ref);
@@ -93,15 +95,15 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 		return null;
 	}
 
-	public List<R> getResources(SortSpec sort) throws  IOException {
+	public List<R> getResources(SortSpec sort) {
 		return getResourcesInternal(sort, null);
 	}
 
-	public List<R> getResources() throws JwkException, IOException {
+	public List<R> getResources() {
 		return getResourcesInternal(null, null);
 	}
 
-	public List<R> getResources(ICriterion<?> criterion) throws IOException {
+	public List<R> getResources(ICriterion<?> criterion) {
 		return getResourcesInternal(null, criterion);
 	}
 
@@ -204,7 +206,7 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 		}
 	}
 
-	protected R getResourceByIdentifier(String identifierValue, String identifierSystem) throws IOException {
+	protected R getResourceByIdentifier(String identifierValue, String identifierSystem) {
 		ICriterion<TokenClientParam> criterion = new TokenClientParam("identifier").exactly().systemAndIdentifier(identifierSystem, identifierValue);
 		Bundle bundle = getFhirClient().search().forResource(getResourceName()).where(criterion).returnBundle(Bundle.class).execute();
 		if (bundle.getTotal() > 0) {
