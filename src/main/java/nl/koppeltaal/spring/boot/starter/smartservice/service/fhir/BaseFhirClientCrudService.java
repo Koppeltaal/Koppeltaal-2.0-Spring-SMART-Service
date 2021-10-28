@@ -107,11 +107,19 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 		return getResourcesInternal(null, criterion);
 	}
 
-	public List<R> getResources(SortSpec sort, ICriterion<?> criterion) throws IOException {
+	public List<R> getResources(Map<String, List<IQueryParameterType>> criteria) {
+		return getResourcesInternal(null, null, criteria);
+	}
+
+	public List<R> getResources(SortSpec sort, ICriterion<?> criterion) {
 		return getResourcesInternal(sort, criterion);
 	}
 
-	private List<R> getResourcesInternal(SortSpec sort, ICriterion<?> criterion) throws IOException {
+	private List<R> getResourcesInternal(SortSpec sort, ICriterion<?> criterion) {
+		return  getResourcesInternal(sort, criterion, null);
+	}
+
+	private List<R> getResourcesInternal(SortSpec sort, ICriterion<?> criterion, Map<String, List<IQueryParameterType>> criteria) {
 		List<R> rv = new ArrayList<>();
 
 		final IQuery<Bundle> query = getFhirClient().search().forResource(getResourceName()).returnBundle(Bundle.class);
@@ -122,6 +130,11 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 
 		if(criterion != null) {
 			query.where(criterion);
+		}
+
+		if(criteria != null) {
+			if(criterion != null) throw new IllegalStateException("Cannot define both a criterion and criteria.");
+			query.where(criteria);
 		}
 
 		//FIXME: The server returns paginated results, this client doesn't support pagination,
