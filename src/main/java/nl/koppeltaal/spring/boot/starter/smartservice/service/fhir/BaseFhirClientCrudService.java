@@ -125,7 +125,7 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 
 		final IQuery<Bundle> query = getFhirClient().search().forResource(getResourceName()).returnBundle(Bundle.class);
 
-		query.sort(sort != null ? sort : new SortSpec("id", SortOrderEnum.ASC));
+		query.sort(sort != null ? sort : new SortSpec("_id", SortOrderEnum.ASC));
 
 		if(criterion != null) {
 			query.where(criterion);
