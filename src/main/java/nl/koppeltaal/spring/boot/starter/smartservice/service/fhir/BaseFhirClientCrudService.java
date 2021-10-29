@@ -11,6 +11,7 @@ package nl.koppeltaal.spring.boot.starter.smartservice.service.fhir;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.api.IQueryParameterType;
 import ca.uhn.fhir.rest.api.MethodOutcome;
+import ca.uhn.fhir.rest.api.SortOrderEnum;
 import ca.uhn.fhir.rest.api.SortSpec;
 import ca.uhn.fhir.rest.gclient.ICriterion;
 import ca.uhn.fhir.rest.gclient.IQuery;
@@ -124,9 +125,7 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 
 		final IQuery<Bundle> query = getFhirClient().search().forResource(getResourceName()).returnBundle(Bundle.class);
 
-		if(sort != null) {
-			query.sort(sort);
-		}
+		query.sort(sort != null ? sort : new SortSpec("id", SortOrderEnum.ASC));
 
 		if(criterion != null) {
 			query.where(criterion);
