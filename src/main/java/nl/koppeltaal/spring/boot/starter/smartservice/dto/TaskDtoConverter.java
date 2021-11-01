@@ -23,7 +23,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class TaskDtoConverter implements DtoConverter<TaskDto, Task> {
 
-	public static final String KT2_PROFILE_EXTENSION__CARE_TEAM__OBSERVER = "https://example.org/fhir/StructureDefinition/KT2_ObservationTeam";
+	public static final String KT2_PROFILE_EXTENSION__CARE_TEAM__OBSERVER = "http://koppeltaal.nl/fhir/StructureDefinition/KT2ObservationTeam";
+	public static final String KT2_PROFILE_TASK = "http://koppeltaal.nl/fhir/StructureDefinition/KT2Task";
 
 	public void applyDto(Task task, TaskDto taskDto) {
 		setId(task, taskDto);

@@ -60,7 +60,7 @@ public class TaskFhirClientService extends BaseFhirClientCrudService<TaskDto, Ta
 			task = new Task();
 
 			final Meta meta = new Meta();
-			meta.addProfile("http://example.org/fhir/StructureDefinition/KT2Task");
+			meta.addProfile(TaskDtoConverter.KT2_PROFILE_TASK);
 			task.setMeta(meta);
 
 			if(taskIdentifier == null) {
