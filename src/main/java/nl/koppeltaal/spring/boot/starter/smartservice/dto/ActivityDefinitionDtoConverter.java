@@ -8,8 +8,8 @@
 
 package nl.koppeltaal.spring.boot.starter.smartservice.dto;
 
-import static nl.koppeltaal.spring.boot.starter.smartservice.dto.ActivityDefinitionDto.EXTENSION__ENDPOINT;
-import static nl.koppeltaal.spring.boot.starter.smartservice.dto.ActivityDefinitionDto.EXTENSION__PUBLISHER_IDENTIFIER;
+import static nl.koppeltaal.spring.boot.starter.smartservice.constants.KoppeltaalConstant.KT2_PROFILE_EXTENSION__ENDPOINT;
+import static nl.koppeltaal.spring.boot.starter.smartservice.constants.KoppeltaalConstant.KT2_PROFILE_EXTENSION__PUBLISHER_IDENTIFIER;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -48,8 +48,8 @@ public class ActivityDefinitionDtoConverter implements DtoConverter<ActivityDefi
 		endpointReference.setType("Endpoint");
 
 		return Arrays.asList(
-				new Extension(EXTENSION__PUBLISHER_IDENTIFIER, new StringType(activityDefinitionDto.getPublisherIdentifier())),
-				new Extension(EXTENSION__ENDPOINT, endpointReference)
+				new Extension(KT2_PROFILE_EXTENSION__PUBLISHER_IDENTIFIER, new StringType(activityDefinitionDto.getPublisherIdentifier())),
+				new Extension(KT2_PROFILE_EXTENSION__ENDPOINT, endpointReference)
 		);
 	}
 
@@ -80,10 +80,10 @@ public class ActivityDefinitionDtoConverter implements DtoConverter<ActivityDefi
 	private void convertExtensions(List<Extension> extensions, ActivityDefinitionDto activityDefinitionDto) {
 		extensions.forEach(extension -> {
 			switch (extension.getUrl()) {
-				case EXTENSION__PUBLISHER_IDENTIFIER:
+				case KT2_PROFILE_EXTENSION__PUBLISHER_IDENTIFIER:
 					activityDefinitionDto.setPublisherIdentifier(extension.getValue().toString());
 					break;
-				case EXTENSION__ENDPOINT:
+				case KT2_PROFILE_EXTENSION__ENDPOINT:
 					activityDefinitionDto.setEndpoint(((Reference) extension.getValue()).getReference());
 					break;
 			}

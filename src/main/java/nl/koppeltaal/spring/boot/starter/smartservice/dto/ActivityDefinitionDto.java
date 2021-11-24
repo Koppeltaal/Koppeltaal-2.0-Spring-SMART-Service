@@ -14,9 +14,6 @@ package nl.koppeltaal.spring.boot.starter.smartservice.dto;
 @SuppressWarnings("unused")
 public class ActivityDefinitionDto extends BaseIdentifierDto {
 
-	public final static String EXTENSION__PUBLISHER_IDENTIFIER = "https://koppeltaal.nl/publisher-identifier";
-	public final static String EXTENSION__ENDPOINT = "http://koppeltaal.nl/fhir/StructureDefinition/KT2EndpointExtension";
-
 	String name;
 	String title;
 	String url;

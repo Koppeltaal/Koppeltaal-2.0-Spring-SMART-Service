@@ -8,6 +8,8 @@
 
 package nl.koppeltaal.spring.boot.starter.smartservice.dto;
 
+import static nl.koppeltaal.spring.boot.starter.smartservice.constants.KoppeltaalConstant.KT2_PROFILE_EXTENSION__CARE_TEAM__OBSERVER;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
@@ -22,9 +24,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class TaskDtoConverter implements DtoConverter<TaskDto, Task> {
-
-	public static final String KT2_PROFILE_EXTENSION__CARE_TEAM__OBSERVER = "http://koppeltaal.nl/fhir/StructureDefinition/KT2ObservationTeam";
-	public static final String KT2_PROFILE_TASK = "http://koppeltaal.nl/fhir/StructureDefinition/KT2Task";
 
 	public void applyDto(Task task, TaskDto taskDto) {
 		setId(task, taskDto);

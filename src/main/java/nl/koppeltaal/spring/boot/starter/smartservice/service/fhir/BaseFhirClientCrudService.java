@@ -8,6 +8,8 @@
 
 package nl.koppeltaal.spring.boot.starter.smartservice.service.fhir;
 
+import static nl.koppeltaal.spring.boot.starter.smartservice.constants.KoppeltaalConstant.CLASS_TO_PROFILE_MAP;
+
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.api.IQueryParameterType;
 import ca.uhn.fhir.rest.api.MethodOutcome;
@@ -161,6 +163,7 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 		try {
 			if (res != null) {
 				dtoConverter.applyDto(res, dtoConverter.convert(resource));
+				updateMetaElement(res); //only needed to add profile to existing resources that don't have the "latest" profile
 				MethodOutcome execute = getFhirClient().update().resource(res).execute();
 				updatedEntity = (R) execute.getResource();
 
@@ -235,6 +238,12 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 		if (meta == null) {
 			meta = new Meta();
 		}
+
+		final String profile = CLASS_TO_PROFILE_MAP.get(resource.getClass());
+		if(StringUtils.isNotBlank(profile) && !meta.hasProfile(profile)) {
+			meta.addProfile(profile);
+		}
+
 		meta.setSource(smartServiceConfiguration.getMetaSourceUuid());
 		resource.setMeta(meta);
 	}
