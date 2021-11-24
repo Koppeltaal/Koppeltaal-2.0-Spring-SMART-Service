@@ -8,12 +8,14 @@
 
 package nl.koppeltaal.spring.boot.starter.smartservice.dto;
 
-import static nl.koppeltaal.spring.boot.starter.smartservice.constants.KoppeltaalConstant.KT2_PROFILE_EXTENSION__CARE_TEAM__OBSERVER;
+import static nl.koppeltaal.spring.boot.starter.smartservice.constants.FhirConstant.KT2_EXTENSION__CARE_TEAM__OBSERVER;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.Extension;
+import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.ResourceType;
 import org.hl7.fhir.r4.model.Task;
@@ -27,14 +29,17 @@ public class TaskDtoConverter implements DtoConverter<TaskDto, Task> {
 
 	public void applyDto(Task task, TaskDto taskDto) {
 		setId(task, taskDto);
+		task.setIdentifier(
+				Collections.singletonList(createIdentifier(taskDto.getIdentifierSystem(), taskDto.getIdentifierValue())));
 		task.setRequester(new Reference(taskDto.getPractitioner()));
 		task.setOwner(new Reference(taskDto.getPatient()));
 		task.setInstantiatesCanonical(taskDto.getActivityDefinition());
 		task.setStatus(Task.TaskStatus.fromCode(taskDto.getStatus()));
 
 		// remove all "old" observer values
-		final List<Extension> extensionsToKeep = task.getExtensionsByUrl(KT2_PROFILE_EXTENSION__CARE_TEAM__OBSERVER).stream()
-				.filter(extension -> !StringUtils.equals(KT2_PROFILE_EXTENSION__CARE_TEAM__OBSERVER, extension.getUrl()))
+		final List<Extension> extensionsToKeep = task.getExtensionsByUrl(
+						KT2_EXTENSION__CARE_TEAM__OBSERVER).stream()
+				.filter(extension -> !StringUtils.equals(KT2_EXTENSION__CARE_TEAM__OBSERVER, extension.getUrl()))
 				.collect(Collectors.toList());
 		task.setExtension(extensionsToKeep);
 
@@ -50,20 +55,27 @@ public class TaskDtoConverter implements DtoConverter<TaskDto, Task> {
 
 		final Extension observerExtension = new Extension();
 		observerExtension.setValue(careTeamReference);
-		observerExtension.setUrl(KT2_PROFILE_EXTENSION__CARE_TEAM__OBSERVER);
+		observerExtension.setUrl(KT2_EXTENSION__CARE_TEAM__OBSERVER);
 
 		task.addExtension(observerExtension);
 	}
 
 	public void applyResource(TaskDto taskDto, Task task) {
 		taskDto.setReference(getRelativeReference(task.getIdElement()));
+
+		List<Identifier> identifiers = task.getIdentifier();
+		for (Identifier identifier : identifiers) {
+			taskDto.setIdentifierSystem(identifier.getSystem());
+			taskDto.setIdentifierValue(identifier.getValue());
+		}
+
 		taskDto.setPatient(task.getOwner().getReference());
 		taskDto.setPractitioner(task.getRequester().getReference());
 		taskDto.setActivityDefinition(task.getInstantiatesCanonical());
 		if (task.getStatus() != null)
 			taskDto.setStatus(task.getStatus().toCode());
 
-		task.getExtensionsByUrl(KT2_PROFILE_EXTENSION__CARE_TEAM__OBSERVER).forEach(extension ->
+		task.getExtensionsByUrl(KT2_EXTENSION__CARE_TEAM__OBSERVER).forEach(extension ->
 			taskDto.getObserverReferences().add(((Reference) extension.getValue()).getReference())
 		);
 	}

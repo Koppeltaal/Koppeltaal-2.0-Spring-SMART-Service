@@ -7,7 +7,7 @@ import java.util.List;
  *
  */
 @SuppressWarnings("unused")
-public class TaskDto extends BaseDto {
+public class TaskDto extends BaseIdentifierDto {
 	String activityDefinition;
 	String patient;
 	String practitioner;

@@ -8,7 +8,7 @@
 
 package nl.koppeltaal.spring.boot.starter.smartservice.service.fhir;
 
-import static nl.koppeltaal.spring.boot.starter.smartservice.constants.KoppeltaalConstant.CLASS_TO_PROFILE_MAP;
+import static nl.koppeltaal.spring.boot.starter.smartservice.constants.FhirConstant.CLASS_TO_PROFILE_MAP;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.api.IQueryParameterType;

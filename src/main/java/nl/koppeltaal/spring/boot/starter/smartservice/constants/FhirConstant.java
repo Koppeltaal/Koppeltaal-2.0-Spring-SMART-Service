@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.hl7.fhir.r4.model.ActivityDefinition;
 import org.hl7.fhir.r4.model.CareTeam;
+import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.Device;
 import org.hl7.fhir.r4.model.DomainResource;
 import org.hl7.fhir.r4.model.Endpoint;
@@ -13,7 +14,7 @@ import org.hl7.fhir.r4.model.RelatedPerson;
 import org.hl7.fhir.r4.model.Subscription;
 import org.hl7.fhir.r4.model.Task;
 
-public class KoppeltaalConstant {
+public class FhirConstant {
 
   public static final String KT2_PROFILE__ACTIVITY_DEFINITION = "http://koppeltaal.nl/fhir/StructureDefinition/KT2ActivityDefinition";
   public static final String KT2_PROFILE__CARE_TEAM = "http://koppeltaal.nl/fhir/StructureDefinition/KT2CareTeam";
@@ -37,8 +38,12 @@ public class KoppeltaalConstant {
     put(Task.class, KT2_PROFILE__TASK);
   }};
 
-  public static final String KT2_PROFILE_EXTENSION__CARE_TEAM__OBSERVER = "http://koppeltaal.nl/fhir/StructureDefinition/KT2ObservationTeam";
-  public final static String KT2_PROFILE_EXTENSION__ENDPOINT = "http://koppeltaal.nl/fhir/StructureDefinition/KT2EndpointExtension";
-  public final static String KT2_PROFILE_EXTENSION__PUBLISHER_IDENTIFIER = "https://koppeltaal.nl/publisher-identifier";
+  public static final String KT2_EXTENSION__CARE_TEAM__OBSERVER = "http://koppeltaal.nl/fhir/StructureDefinition/KT2ObservationTeam";
+  public final static String KT2_EXTENSION__ENDPOINT = "http://koppeltaal.nl/fhir/StructureDefinition/KT2EndpointExtension";
+  public final static String KT2_EXTENSION__PUBLISHER_IDENTIFIER = "https://koppeltaal.nl/publisher-identifier";
 
+
+  public final static String CODING_SYSTEM__SNOMED = "http://snomed.info/sct";
+  public final static Coding CODING__SNOMED__PERSON = new Coding(CODING_SYSTEM__SNOMED, "125676002", "Person");
+  public final static Coding CODING_SNOMED__HEALTHCARE_PROFESSIONAL = new Coding(CODING_SYSTEM__SNOMED, "223366009", "Healthcare professional");
 }

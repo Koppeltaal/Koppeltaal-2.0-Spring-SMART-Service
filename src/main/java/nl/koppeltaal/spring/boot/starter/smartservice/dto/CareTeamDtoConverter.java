@@ -8,12 +8,16 @@
 
 package nl.koppeltaal.spring.boot.starter.smartservice.dto;
 
+import static nl.koppeltaal.spring.boot.starter.smartservice.constants.FhirConstant.CODING_SNOMED__HEALTHCARE_PROFESSIONAL;
+import static nl.koppeltaal.spring.boot.starter.smartservice.constants.FhirConstant.CODING__SNOMED__PERSON;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.hl7.fhir.r4.model.CareTeam;
 import org.hl7.fhir.r4.model.CareTeam.CareTeamParticipantComponent;
+import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Reference;
 import org.springframework.stereotype.Component;
@@ -37,6 +41,12 @@ public class CareTeamDtoConverter implements DtoConverter<CareTeamDto, CareTeam>
 			final CareTeamParticipantComponent participantComponent = new CareTeamParticipantComponent();
 
 			participantComponent.setMember(new Reference(participantReference));
+
+			final CodeableConcept role = new CodeableConcept();
+			role.addCoding(participantReference.startsWith("Practitioner") ? CODING_SNOMED__HEALTHCARE_PROFESSIONAL : CODING__SNOMED__PERSON);
+
+			participantComponent.setRole(Collections.singletonList(role));
+
 			careTeam.addParticipant(participantComponent);
 		}
 	}

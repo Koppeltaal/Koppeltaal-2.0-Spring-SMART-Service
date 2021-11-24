@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import nl.koppeltaal.spring.boot.starter.smartservice.configuration.SmartServiceConfiguration;
-import nl.koppeltaal.spring.boot.starter.smartservice.constants.KoppeltaalConstant;
+import nl.koppeltaal.spring.boot.starter.smartservice.constants.FhirConstant;
 import nl.koppeltaal.spring.boot.starter.smartservice.dto.TaskDto;
 import nl.koppeltaal.spring.boot.starter.smartservice.dto.TaskDtoConverter;
 import nl.koppeltaal.spring.boot.starter.smartservice.utils.ResourceUtils;
@@ -61,7 +61,7 @@ public class TaskFhirClientService extends BaseFhirClientCrudService<TaskDto, Ta
 			task = new Task();
 
 			final Meta meta = new Meta();
-			meta.addProfile(KoppeltaalConstant.KT2_PROFILE__TASK);
+			meta.addProfile(FhirConstant.KT2_PROFILE__TASK);
 			task.setMeta(meta);
 
 			if(taskIdentifier == null) {
