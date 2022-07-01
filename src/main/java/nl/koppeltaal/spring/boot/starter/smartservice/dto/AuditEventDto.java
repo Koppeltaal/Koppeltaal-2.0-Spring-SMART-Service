@@ -1,159 +1,214 @@
 package nl.koppeltaal.spring.boot.starter.smartservice.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
-import org.hl7.fhir.r4.model.Coding;
+import java.util.List;
 
 public class AuditEventDto extends BaseDto {
-  private final static String SYS__DCM = "http://dicom.nema.org/resources/ontology/DCM";
-  private final static String SYS__AUDIT_EVENT_TYPE = "http://terminology.hl7.org/CodeSystem/audit-event-type";
-  private final static String SYS__RESTFUL_INTERACTION = "http://hl7.org/fhir/restful-interaction";
+	private final static String SYS__DCM = "http://dicom.nema.org/resources/ontology/DCM";
+	private final static String SYS__AUDIT_EVENT_TYPE = "http://terminology.hl7.org/CodeSystem/audit-event-type";
+	private final static String SYS__RESTFUL_INTERACTION = "http://hl7.org/fhir/restful-interaction";
 
-  //TODO: Implement all fields
+	//TODO: Implement all fields
 
-  private String type;
-  private String subType;
-  private Date recorded;
+	private AuditEventType type;
+	private AuditEventSubType subType;
+	private Date recorded;
 
-  //TODO: Make proper DTOs objects for  agent, source and entity
-  private String sourceReference;
-  private String entityWhat;
-  private String source;
+	//TODO: Make proper DTOs objects for  agent, source and entity
+	private String sourceReference;
+	private String entityType;
+	private List<String> entityWhat = new ArrayList<>();
+	private String action;
+	private String source;
+	private String agent;
+	private String query;
+	private String outcome;
+	private String traceId;
+	private String spanId;
+	private String parentSpanId;
 
-  public String getType() {
-    return type;
-  }
+	public void addEntityWhat(String entityWhat) {
+		this.entityWhat.add(entityWhat);
+	}
 
-  public void setType(String type) {
-    this.type = type;
-  }
+	public String getAction() {
+		return action;
+	}
 
-  public String getSubType() {
-    return subType;
-  }
+	public void setAction(String action) {
+		this.action = action;
+	}
 
-  public void setSubType(String subType) {
-    this.subType = subType;
-  }
+	public String getAgent() {
+		return agent;
+	}
 
-  public Date getRecorded() {
-    return recorded;
-  }
+	public void setAgent(String agent) {
+		this.agent = agent;
+	}
 
-  public void setRecorded(Date recorded) {
-    this.recorded = recorded;
-  }
+	public String getEntityType() {
+		return entityType;
+	}
 
-  public String getSourceReference() {
-    return sourceReference;
-  }
+	public void setEntityType(String entityType) {
+		this.entityType = entityType;
+	}
 
-  public void setSourceReference(String sourceReference) {
-    this.sourceReference = sourceReference;
-  }
+	public List<String> getEntityWhat() {
+		return entityWhat;
+	}
 
-  public String getEntityWhat() {
-    return entityWhat;
-  }
+	public void setEntityWhat(List<String> entityWhat) {
+		this.entityWhat = entityWhat;
+	}
 
-  public void setEntityWhat(String entityWhat) {
-    this.entityWhat = entityWhat;
-  }
+	public String getOutcome() {
+		return outcome;
+	}
 
-  public String getSource() {
-    return source;
-  }
+	public void setOutcome(String outcome) {
+		this.outcome = outcome;
+	}
 
-  public void setSource(String source) {
-    this.source = source;
-  }
+	public String getParentSpanId() {
+		return parentSpanId;
+	}
 
-  public enum AuditEventType {
+	public void setParentSpanId(String parentSpanId) {
+		this.parentSpanId = parentSpanId;
+	}
 
-    APPLICATION_ACTIVITY("110100", SYS__DCM, "Application Activity"),
-    PATIENT_RECORD("110110", SYS__DCM, "Patient Record"),
-    RESTFUL_OPERATION("rest", SYS__AUDIT_EVENT_TYPE, "Restful Operation")
-    ;
+	public String getQuery() {
+		return query;
+	}
 
-    private final String code;
-    private final String system;
-    private final String display;
+	public void setQuery(String query) {
+		this.query = query;
+	}
 
-    AuditEventType(String code, String system, String display) {
-      this.code = code;
-      this.system = system;
-      this.display = display;
-    }
+	public Date getRecorded() {
+		return recorded;
+	}
 
-    public String getCode() {
-      return code;
-    }
+	public void setRecorded(Date recorded) {
+		this.recorded = recorded;
+	}
 
-    public String getSystem() {
-      return system;
-    }
+	public String getSource() {
+		return source;
+	}
 
-    public String getDisplay() {
-      return display;
-    }
+	public void setSource(String source) {
+		this.source = source;
+	}
 
-    public static AuditEventType byDisplay(String display) {
-      for (AuditEventType value : AuditEventType.values()) {
-        if (value.getDisplay().equals(display)) {
-          return value;
-        }
-      }
+	public String getSourceReference() {
+		return sourceReference;
+	}
 
-      throw new IllegalArgumentException(display + " is (currently) not known display value in AuditEventType");
-    }
+	public void setSourceReference(String sourceReference) {
+		this.sourceReference = sourceReference;
+	}
 
-    public Coding getCoding() {
-      return new Coding(this.system, this.code, this.display);
-    }
-  }
+	public String getSpanId() {
+		return spanId;
+	}
 
-  public enum AuditEventSubType {
-    APPLICATION_START("110120", SYS__DCM, "Application Start"),
-    APPLICATION_STOP("110121", SYS__DCM, "Application Stop"),
-    RESTFUL_INTERACTION__CREATE("create", SYS__RESTFUL_INTERACTION, "create"),
-    RESTFUL_INTERACTION__UPDATE("update", SYS__RESTFUL_INTERACTION, "update"),
-    RESTFUL_INTERACTION__DELETE("delete", SYS__RESTFUL_INTERACTION, "delete"),
-    RESTFUL_INTERACTION__READ("read", SYS__RESTFUL_INTERACTION, "read"),
-    ;
-    private final String code;
-    private final String system;
-    private final String display;
+	public void setSpanId(String spanId) {
+		this.spanId = spanId;
+	}
 
-    AuditEventSubType(String code, String system, String display) {
-      this.code = code;
-      this.system = system;
-      this.display = display;
-    }
+	public AuditEventSubType getSubType() {
+		return subType;
+	}
 
-    public String getCode() {
-      return code;
-    }
+	public void setSubType(AuditEventSubType subType) {
+		this.subType = subType;
+	}
 
-    public String getSystem() {
-      return system;
-    }
+	public String getTraceId() {
+		return traceId;
+	}
 
-    public String getDisplay() {
-      return display;
-    }
+	public void setTraceId(String traceId) {
+		this.traceId = traceId;
+	}
 
-    public static AuditEventSubType byDisplay(String display) {
-      for (AuditEventSubType value : AuditEventSubType.values()) {
-        if (value.getDisplay().equals(display)) {
-          return value;
-        }
-      }
+	public AuditEventType getType() {
+		return type;
+	}
 
-      throw new IllegalArgumentException(display + " is (currently) not known display value in AuditEventType");
-    }
+	public void setType(AuditEventType type) {
+		this.type = type;
+	}
 
-    public Coding getCoding() {
-      return new Coding(this.system, this.code, this.display);
-    }
+	public static class AuditEventSubType {
+		public static final AuditEventSubType APPLICATION_START = new AuditEventSubType("110120", SYS__DCM, "Application Start");
+		public static final AuditEventSubType APPLICATION_STOP = new AuditEventSubType("110121", SYS__DCM, "Application Stop");
+		public static final AuditEventSubType RESTFUL_INTERACTION__CREATE = new AuditEventSubType("create", SYS__RESTFUL_INTERACTION, "create");
+		public static final AuditEventSubType RESTFUL_INTERACTION__UPDATE = new AuditEventSubType("update", SYS__RESTFUL_INTERACTION, "update");
+		public static final AuditEventSubType RESTFUL_INTERACTION__DELETE = new AuditEventSubType("delete", SYS__RESTFUL_INTERACTION, "delete");
+		public static final AuditEventSubType RESTFUL_INTERACTION__READ = new AuditEventSubType("read", SYS__RESTFUL_INTERACTION, "read");
+		private final String code;
+		private final String system;
+		private final String display;
 
-  }
+		AuditEventSubType(String code, String system, String display) {
+			this.code = code;
+			this.system = system;
+			this.display = display;
+		}
+
+		public static AuditEventSubType newAuditEventSubType(String code, String system, String display) {
+			return new AuditEventSubType(code, system, display);
+		}
+
+		public String getCode() {
+			return code;
+		}
+
+		public String getDisplay() {
+			return display;
+		}
+
+		public String getSystem() {
+			return system;
+		}
+
+	}
+
+	public static class AuditEventType {
+
+		public static final AuditEventType APPLICATION_ACTIVITY = new AuditEventType("110100", SYS__DCM, "Application Activity");
+		public static final AuditEventType PATIENT_RECORD = new AuditEventType("110110", SYS__DCM, "Patient Record");
+		public static final AuditEventType RESTFUL_OPERATION = new AuditEventType("rest", SYS__AUDIT_EVENT_TYPE, "RESTful Operation");
+		private final String code;
+		private final String system;
+		private final String display;
+
+		AuditEventType(String code, String system, String display) {
+			this.code = code;
+			this.system = system;
+			this.display = display;
+		}
+
+		public static AuditEventType newAuditEventType(String code, String system, String display) {
+			return new AuditEventType(code, system, display);
+		}
+
+		public String getCode() {
+			return code;
+		}
+
+
+		public String getDisplay() {
+			return display;
+		}
+
+		public String getSystem() {
+			return system;
+		}
+	}
 }
