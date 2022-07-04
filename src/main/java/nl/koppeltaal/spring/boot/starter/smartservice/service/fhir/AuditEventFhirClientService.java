@@ -110,11 +110,11 @@ public class AuditEventFhirClientService extends BaseFhirClientCrudService<Audit
 	}
 
 	private Coding getCoding(AuditEventSubType type) {
-		return new Coding(type.getCode(), type.getDisplay(), type.getSystem());
+		return new Coding(type.getSystem(), type.getCode(), type.getDisplay());
 	}
 
 	private Coding getCoding(AuditEventType type) {
-		return new Coding(type.getCode(), type.getDisplay(), type.getSystem());
+		return new Coding(type.getSystem(), type.getCode(), type.getDisplay());
 	}
 
 	@Override
