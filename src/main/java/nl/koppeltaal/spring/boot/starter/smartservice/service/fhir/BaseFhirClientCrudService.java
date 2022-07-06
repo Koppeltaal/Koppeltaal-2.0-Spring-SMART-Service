@@ -82,9 +82,27 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 		return type.execute();
 	}
 
-	public <E extends IClientExecutable<?, O>, O extends MethodOutcome> O executeMethod(E type, @Nullable TraceContext traceContext) {
+	public <E extends IClientExecutable<?, O>, O extends MethodOutcome> O executeMethod(E type, @Nullable TraceContext traceContext, @Nullable R previous) {
 		setTracingHeaders(type, traceContext);
+		setIfMatchHeader(type, previous);
 		return type.execute();
+	}
+
+	private void setIfMatchHeader(IClientExecutable type, @Nullable R previous) {
+		if (previous != null) {
+			String version = getVersion(previous);
+			if (StringUtils.isNotEmpty(version)) {
+				type.withAdditionalHeader("If-Match", "W/\"" + version + "\"");
+			}
+		}
+	}
+
+	private String getVersion(R previous) {
+		String version = previous.getIdElement().getVersionIdPart();
+		if (StringUtils.isEmpty(version)) {
+			version = previous.getMeta().getVersionId();
+		}
+		return version;
 	}
 
 	private void setTracingHeaders(IClientExecutable type, TraceContext traceContext) {
@@ -176,7 +194,7 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 			if (res != null) {
 				dtoConverter.applyDto(res, dtoConverter.convert(resource));
 				updateMetaElement(res); //only needed to add profile to existing resources that don't have the "latest" profile
-				MethodOutcome execute = executeMethod(getFhirClient().update().resource(res), traceContext);
+				MethodOutcome execute = executeMethod(getFhirClient().update().resource(res), traceContext, res);
 				updatedEntity = (R) execute.getResource();
 
 				LOG.info("Updated entity [{}]", updatedEntity.getIdElement());
@@ -184,7 +202,7 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 			}
 
 			updateMetaElement(resource);
-			MethodOutcome execute = executeMethod(getFhirClient().create().resource(resource), traceContext);
+			MethodOutcome execute = executeMethod(getFhirClient().create().resource(resource), traceContext,null);
 			updatedEntity = (R) execute.getResource();
 			LOG.info("Created entity [{}]", updatedEntity.getIdElement());
 
