@@ -105,7 +105,7 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 		return version;
 	}
 
-	private void setTracingHeaders(IClientExecutable type, TraceContext traceContext) {
+	private void setTracingHeaders(IClientExecutable type, @Nullable TraceContext traceContext) {
 		traceContext = traceContext != null ? traceContext : new TraceContext();
 		type.withAdditionalHeader("X-B3-TraceId", traceContext.getTraceId())
 				.withAdditionalHeader("X-B3-ParentSpanId", traceContext.getParentSpanId())
@@ -179,7 +179,7 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 		return storeResource(resource, null);
 	}
 
-	public R storeResource(R resource, TraceContext traceContext) throws IOException {
+	public R storeResource(R resource, @Nullable TraceContext traceContext) throws IOException {
 		String identifier = getIdentifier(getDefaultSystem(), resource);
 		String id = getId(resource);
 		R res = null;
