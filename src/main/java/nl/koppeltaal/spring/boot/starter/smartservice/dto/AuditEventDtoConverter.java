@@ -79,9 +79,9 @@ public class AuditEventDtoConverter implements DtoConverter<AuditEventDto, Audit
 			dto.setOutcome(outcome.getDisplay());
 		}
 
-		dto.setTraceId(getExtensionValue(auditEvent, "b3:traceId"));
-		dto.setSpanId(getExtensionValue(auditEvent, "b3:spanId"));
-		dto.setParentSpanId(getExtensionValue(auditEvent, "b3:parentSpanId"));
+		dto.setTraceId(getExtensionValue(auditEvent, "https://www.w3.org/TR/trace-context/#trace-id"));
+		dto.setSpanId(getExtensionValue(auditEvent, "https://www.w3.org/TR/trace-context/#parent-id"));
+		dto.setParentSpanId(getExtensionValue(auditEvent, "https://www.w3.org/TR/trace-context/#traceparent-header"));
 
 		return dto;
 	}

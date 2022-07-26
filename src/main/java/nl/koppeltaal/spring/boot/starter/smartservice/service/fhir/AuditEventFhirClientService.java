@@ -28,6 +28,8 @@ import java.util.Date;
 @Service
 public class AuditEventFhirClientService extends BaseFhirClientCrudService<AuditEventDto, AuditEvent> {
 
+	public final static String META_PROFILE_URL = "http://koppeltaal.nl/fhir/StructureDefinition/KT2AuditEvent";
+
 	private static final Logger LOG = LoggerFactory.getLogger(AuditEventFhirClientService.class);
 
 	public AuditEventFhirClientService(SmartServiceConfiguration smartServiceConfiguration, SmartClientCredentialService smartClientCredentialService, FhirContext fhirContext, DtoConverter<AuditEventDto, AuditEvent> dtoConverter) {
@@ -95,6 +97,9 @@ public class AuditEventFhirClientService extends BaseFhirClientCrudService<Audit
 	private AuditEvent getAuditEventBase(Coding type, Coding subType) {
 		final InstantType date = new InstantType(new Date());
 
+		Meta meta = new Meta();
+		meta.setProfile(Collections.singletonList(new CanonicalType(META_PROFILE_URL)));
+
 		final Reference reference = new Reference(smartServiceConfiguration.getMetaSourceUuid());
 		final AuditEventSourceComponent source = new AuditEventSourceComponent(reference);
 
@@ -140,9 +145,9 @@ public class AuditEventFhirClientService extends BaseFhirClientCrudService<Audit
 
 		auditEvent.setEntity(Collections.singletonList(entity));
 
-		auditEvent.addExtension("b3:traceId", new IdType(traceContext.getTraceId()));
-		auditEvent.addExtension("b3:spanId", new IdType(traceContext.getSpanId()));
-		auditEvent.addExtension("b3:parentSpanId", new IdType(traceContext.getParentSpanId()));
+		auditEvent.addExtension("https://www.w3.org/TR/trace-context/#trace-id", new IdType(traceContext.getTraceId()));
+		auditEvent.addExtension("https://www.w3.org/TR/trace-context/#parent-id", new IdType(traceContext.getSpanId()));
+		auditEvent.addExtension("https://www.w3.org/TR/trace-context/#traceparent-header", new IdType(traceContext.getParentSpanId()));
 
 		return storeResource(auditEvent);
 	}
