@@ -80,7 +80,7 @@ public class AuditEventDtoConverter implements DtoConverter<AuditEventDto, Audit
 		}
 
 		dto.setTraceId(getExtensionValue(auditEvent, "http://koppeltaal.nl/fhir/StructureDefinition/trace-id"));
-		dto.setSpanId(getExtensionValue(auditEvent, "http://koppeltaal.nl/fhir/StructureDefinition/parent-id"));
+		dto.setSpanId(getExtensionValue(auditEvent, "http://koppeltaal.nl/fhir/StructureDefinition/request-id"));
 		dto.setParentSpanId(getExtensionValue(auditEvent, "http://koppeltaal.nl/fhir/StructureDefinition/correlation-id"));
 
 		return dto;
