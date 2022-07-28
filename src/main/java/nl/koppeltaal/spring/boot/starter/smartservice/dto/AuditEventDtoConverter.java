@@ -79,9 +79,9 @@ public class AuditEventDtoConverter implements DtoConverter<AuditEventDto, Audit
 			dto.setOutcome(outcome.getDisplay());
 		}
 
-		dto.setTraceId(getExtensionValue(auditEvent, "https://www.w3.org/TR/trace-context/#trace-id"));
-		dto.setSpanId(getExtensionValue(auditEvent, "https://www.w3.org/TR/trace-context/#parent-id"));
-		dto.setParentSpanId(getExtensionValue(auditEvent, "https://www.w3.org/TR/trace-context/#traceparent-header"));
+		dto.setTraceId(getExtensionValue(auditEvent, "http://koppeltaal.nl/fhir/StructureDefinition/trace-id"));
+		dto.setSpanId(getExtensionValue(auditEvent, "http://koppeltaal.nl/fhir/StructureDefinition/parent-id"));
+		dto.setParentSpanId(getExtensionValue(auditEvent, "http://koppeltaal.nl/fhir/StructureDefinition/correlation-id"));
 
 		return dto;
 	}

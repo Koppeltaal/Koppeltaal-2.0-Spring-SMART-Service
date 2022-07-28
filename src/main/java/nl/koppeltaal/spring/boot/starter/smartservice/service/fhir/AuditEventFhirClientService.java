@@ -104,6 +104,7 @@ public class AuditEventFhirClientService extends BaseFhirClientCrudService<Audit
 		final AuditEventSourceComponent source = new AuditEventSourceComponent(reference);
 
 		final AuditEvent auditEvent = new AuditEvent(type, date, source);
+		auditEvent.setMeta(meta);
 		auditEvent.setSubtype(Collections.singletonList(subType));
 
 		final AuditEventAgentComponent agent = new AuditEventAgentComponent();
@@ -145,9 +146,9 @@ public class AuditEventFhirClientService extends BaseFhirClientCrudService<Audit
 
 		auditEvent.setEntity(Collections.singletonList(entity));
 
-		auditEvent.addExtension("https://www.w3.org/TR/trace-context/#trace-id", new IdType(traceContext.getTraceId()));
-		auditEvent.addExtension("https://www.w3.org/TR/trace-context/#parent-id", new IdType(traceContext.getSpanId()));
-		auditEvent.addExtension("https://www.w3.org/TR/trace-context/#traceparent-header", new IdType(traceContext.getParentSpanId()));
+		auditEvent.addExtension("http://koppeltaal.nl/fhir/StructureDefinition/trace-id", new IdType(traceContext.getTraceId()));
+		auditEvent.addExtension("http://koppeltaal.nl/fhir/StructureDefinition/parent-id", new IdType(traceContext.getSpanId()));
+		auditEvent.addExtension("http://koppeltaal.nl/fhir/StructureDefinition/correlation-id", new IdType(traceContext.getParentSpanId()));
 
 		return storeResource(auditEvent);
 	}
