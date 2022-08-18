@@ -54,6 +54,7 @@ public class PatientDtoConverter implements DtoConverter<PatientDto, Patient> {
 
 		patient.getName().clear();
 		HumanName humanName = patient.addName();
+		humanName.setUse(HumanName.NameUse.OFFICIAL);
 		humanName.setFamily(patientDto.getNameFamily());
 		if (StringUtils.isNotEmpty(patientDto.getNameGiven())) {
 			humanName.getGiven().clear();

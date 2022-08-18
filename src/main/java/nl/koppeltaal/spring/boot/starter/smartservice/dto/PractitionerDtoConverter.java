@@ -72,6 +72,7 @@ public class PractitionerDtoConverter implements DtoConverter<PractitionerDto, P
 
 		practitioner.getName().clear();
 		HumanName humanName = practitioner.addName();
+		humanName.setUse(HumanName.NameUse.OFFICIAL);
 		humanName.setFamily(practitionerDto.getNameFamily());
 		if (StringUtils.isNotEmpty(practitionerDto.getNameGiven())) {
 			humanName.getGiven().clear();

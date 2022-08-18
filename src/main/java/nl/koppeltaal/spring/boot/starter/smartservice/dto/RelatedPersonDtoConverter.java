@@ -74,6 +74,7 @@ public class RelatedPersonDtoConverter implements DtoConverter<RelatedPersonDto,
 
 		relatedPerson.getName().clear();
 		HumanName humanName = relatedPerson.addName();
+		humanName.setUse(HumanName.NameUse.OFFICIAL);
 		humanName.setFamily(relatedPersonDto.getNameFamily());
 		if (StringUtils.isNotEmpty(relatedPersonDto.getNameGiven())) {
 			humanName.getGiven().clear();
