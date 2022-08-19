@@ -14,12 +14,8 @@ import static nl.koppeltaal.spring.boot.starter.smartservice.constants.FhirConst
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.hl7.fhir.r4.model.ActivityDefinition;
-import org.hl7.fhir.r4.model.Enumerations;
-import org.hl7.fhir.r4.model.Extension;
-import org.hl7.fhir.r4.model.Identifier;
-import org.hl7.fhir.r4.model.Reference;
-import org.hl7.fhir.r4.model.StringType;
+
+import org.hl7.fhir.r4.model.*;
 import org.springframework.stereotype.Component;
 
 /**
@@ -48,7 +44,7 @@ public class ActivityDefinitionDtoConverter implements DtoConverter<ActivityDefi
 		endpointReference.setType("Endpoint");
 
 		return Arrays.asList(
-				new Extension(KT2_EXTENSION__PUBLISHER_IDENTIFIER, new StringType(activityDefinitionDto.getPublisherIdentifier())),
+				new Extension(KT2_EXTENSION__PUBLISHER_IDENTIFIER, new IdType(activityDefinitionDto.getPublisherIdentifier())),
 				new Extension(KT2_EXTENSION__ENDPOINT, endpointReference)
 		);
 	}

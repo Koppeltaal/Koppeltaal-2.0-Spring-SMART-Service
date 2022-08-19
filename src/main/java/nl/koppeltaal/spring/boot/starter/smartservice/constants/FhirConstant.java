@@ -2,17 +2,8 @@ package nl.koppeltaal.spring.boot.starter.smartservice.constants;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.hl7.fhir.r4.model.ActivityDefinition;
-import org.hl7.fhir.r4.model.CareTeam;
-import org.hl7.fhir.r4.model.Coding;
-import org.hl7.fhir.r4.model.Device;
-import org.hl7.fhir.r4.model.DomainResource;
-import org.hl7.fhir.r4.model.Endpoint;
-import org.hl7.fhir.r4.model.Patient;
-import org.hl7.fhir.r4.model.Practitioner;
-import org.hl7.fhir.r4.model.RelatedPerson;
-import org.hl7.fhir.r4.model.Subscription;
-import org.hl7.fhir.r4.model.Task;
+
+import org.hl7.fhir.r4.model.*;
 
 public class FhirConstant {
 
@@ -20,6 +11,7 @@ public class FhirConstant {
   public static final String KT2_PROFILE__CARE_TEAM = "http://koppeltaal.nl/fhir/StructureDefinition/KT2CareTeam";
   public static final String KT2_PROFILE__DEVICE = "http://koppeltaal.nl/fhir/StructureDefinition/KT2Device";
   public static final String KT2_PROFILE__ENDPOINT = "http://koppeltaal.nl/fhir/StructureDefinition/KT2Endpoint";
+  public static final String KT2_PROFILE__ORGANIZATION = "http://koppeltaal.nl/fhir/StructureDefinition/KT2Organization";
   public static final String KT2_PROFILE__PATIENT = "http://koppeltaal.nl/fhir/StructureDefinition/KT2Patient";
   public static final String KT2_PROFILE__PRACTITIONER = "http://koppeltaal.nl/fhir/StructureDefinition/KT2Practitioner";
   public static final String KT2_PROFILE__RELATED_PERSON = "http://koppeltaal.nl/fhir/StructureDefinition/KT2RelatedPerson";
@@ -31,6 +23,7 @@ public class FhirConstant {
     put(CareTeam.class, KT2_PROFILE__CARE_TEAM);
     put(Device.class, KT2_PROFILE__DEVICE);
     put(Endpoint.class, KT2_PROFILE__ENDPOINT);
+    put(Organization.class, KT2_PROFILE__ORGANIZATION);
     put(Patient.class, KT2_PROFILE__PATIENT);
     put(Practitioner.class, KT2_PROFILE__PRACTITIONER);
     put(RelatedPerson.class, KT2_PROFILE__RELATED_PERSON);
@@ -40,7 +33,7 @@ public class FhirConstant {
 
   public static final String KT2_EXTENSION__CARE_TEAM__OBSERVER = "http://koppeltaal.nl/fhir/StructureDefinition/KT2ObservationTeam";
   public final static String KT2_EXTENSION__ENDPOINT = "http://koppeltaal.nl/fhir/StructureDefinition/KT2EndpointExtension";
-  public final static String KT2_EXTENSION__PUBLISHER_IDENTIFIER = "https://koppeltaal.nl/publisher-identifier";
+  public final static String KT2_EXTENSION__PUBLISHER_IDENTIFIER = "http://koppeltaal.nl/fhir/StructureDefinition/KT2PublisherIdentifier";
 
 
   public final static String CODING_SYSTEM__SNOMED = "http://snomed.info/sct";
