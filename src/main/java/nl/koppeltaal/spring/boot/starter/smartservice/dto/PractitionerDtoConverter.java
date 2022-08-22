@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component
-public class PractitionerDtoConverter implements DtoConverter<PractitionerDto, Practitioner> {
+public class PractitionerDtoConverter extends PersonDtoConverter implements DtoConverter<PractitionerDto, Practitioner> {
 
 	public void applyDto(Practitioner practitioner, PractitionerDto practitionerDto) {
 		setId(practitioner, practitionerDto);
@@ -71,15 +71,8 @@ public class PractitionerDtoConverter implements DtoConverter<PractitionerDto, P
 		practitioner.setBirthDate(practitionerDto.getBirthDate());
 
 		practitioner.getName().clear();
-		HumanName humanName = practitioner.addName();
-		humanName.setUse(HumanName.NameUse.OFFICIAL);
-		humanName.setFamily(practitionerDto.getNameFamily());
-		if (StringUtils.isNotEmpty(practitionerDto.getNameGiven())) {
-			humanName.getGiven().clear();
-			for (String givenName : StringUtils.split(practitionerDto.getNameGiven())) {
-				humanName.addGiven(givenName);
-			}
-		}
+
+		fillHumanName(practitioner.addName(), practitionerDto);
 
 		practitioner.getQualification().clear();
 		String organization = practitionerDto.getOrganization();

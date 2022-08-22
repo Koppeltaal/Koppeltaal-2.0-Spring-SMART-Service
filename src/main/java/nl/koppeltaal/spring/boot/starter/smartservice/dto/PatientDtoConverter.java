@@ -12,19 +12,14 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
-import org.hl7.fhir.r4.model.ContactPoint;
-import org.hl7.fhir.r4.model.Enumerations;
-import org.hl7.fhir.r4.model.HumanName;
-import org.hl7.fhir.r4.model.Identifier;
-import org.hl7.fhir.r4.model.Patient;
-import org.hl7.fhir.r4.model.Reference;
+import org.hl7.fhir.r4.model.*;
 import org.springframework.stereotype.Component;
 
 /**
  *
  */
 @Component
-public class PatientDtoConverter implements DtoConverter<PatientDto, Patient> {
+public class PatientDtoConverter extends PersonDtoConverter implements DtoConverter<PatientDto, Patient> {
 
 	public void applyDto(Patient patient, PatientDto patientDto) {
 		setId(patient, patientDto);
@@ -53,15 +48,8 @@ public class PatientDtoConverter implements DtoConverter<PatientDto, Patient> {
 		patient.setBirthDate(patientDto.getBirthDate());
 
 		patient.getName().clear();
-		HumanName humanName = patient.addName();
-		humanName.setUse(HumanName.NameUse.OFFICIAL);
-		humanName.setFamily(patientDto.getNameFamily());
-		if (StringUtils.isNotEmpty(patientDto.getNameGiven())) {
-			humanName.getGiven().clear();
-			for (String givenName : StringUtils.split(patientDto.getNameGiven())) {
-				humanName.addGiven(givenName);
-			}
-		}
+
+		fillHumanName(patient.addName(), patientDto);
 
 		String organization = patientDto.getOrganization();
 		if (StringUtils.isNotEmpty(organization) && StringUtils.contains(organization, "|")) {

@@ -12,22 +12,14 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
-import org.hl7.fhir.r4.model.Address;
-import org.hl7.fhir.r4.model.CodeableConcept;
-import org.hl7.fhir.r4.model.Coding;
-import org.hl7.fhir.r4.model.ContactPoint;
-import org.hl7.fhir.r4.model.Enumerations;
-import org.hl7.fhir.r4.model.HumanName;
-import org.hl7.fhir.r4.model.Identifier;
-import org.hl7.fhir.r4.model.Reference;
-import org.hl7.fhir.r4.model.RelatedPerson;
+import org.hl7.fhir.r4.model.*;
 import org.springframework.stereotype.Component;
 
 /**
  *
  */
 @Component
-public class RelatedPersonDtoConverter implements DtoConverter<RelatedPersonDto, RelatedPerson> {
+public class RelatedPersonDtoConverter extends PersonDtoConverter implements DtoConverter<RelatedPersonDto, RelatedPerson> {
 
 	public void applyDto(RelatedPerson relatedPerson, RelatedPersonDto relatedPersonDto) {
 		setId(relatedPerson, relatedPersonDto);
@@ -73,15 +65,8 @@ public class RelatedPersonDtoConverter implements DtoConverter<RelatedPersonDto,
 		relatedPerson.setBirthDate(relatedPersonDto.getBirthDate());
 
 		relatedPerson.getName().clear();
-		HumanName humanName = relatedPerson.addName();
-		humanName.setUse(HumanName.NameUse.OFFICIAL);
-		humanName.setFamily(relatedPersonDto.getNameFamily());
-		if (StringUtils.isNotEmpty(relatedPersonDto.getNameGiven())) {
-			humanName.getGiven().clear();
-			for (String givenName : StringUtils.split(relatedPersonDto.getNameGiven())) {
-				humanName.addGiven(givenName);
-			}
-		}
+
+		fillHumanName(relatedPerson.addName(), relatedPersonDto);
 
 		if (StringUtils.isNotEmpty(relatedPersonDto.getRelationshipSystem()) && StringUtils.isNotEmpty(relatedPersonDto.getRelationshipCode())) {
 			CodeableConcept codeableConcept = new CodeableConcept();
