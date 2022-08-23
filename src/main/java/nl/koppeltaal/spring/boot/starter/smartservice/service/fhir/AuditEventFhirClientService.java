@@ -62,6 +62,11 @@ public class AuditEventFhirClientService extends BaseFhirClientCrudService<Audit
 
 		final AuditEvent auditEvent = getAuditEventBase(type, subType);
 
+		AuditEventEntityComponent entity = new AuditEventEntityComponent();
+
+		entity.setDescription("Server shutdown application with client_id " + smartServiceConfiguration.getClientId());
+		auditEvent.setEntity(Collections.singletonList(entity));
+
 		return storeResource(auditEvent);
 	}
 
@@ -75,6 +80,11 @@ public class AuditEventFhirClientService extends BaseFhirClientCrudService<Audit
 		final Coding subType = getCoding(AuditEventSubType.APPLICATION_START);
 
 		final AuditEvent auditEvent = getAuditEventBase(type, subType);
+
+		AuditEventEntityComponent entity = new AuditEventEntityComponent();
+
+		entity.setDescription("Server startup application with client_id " + smartServiceConfiguration.getClientId());
+		auditEvent.setEntity(Collections.singletonList(entity));
 
 		return storeResource(auditEvent);
 	}
