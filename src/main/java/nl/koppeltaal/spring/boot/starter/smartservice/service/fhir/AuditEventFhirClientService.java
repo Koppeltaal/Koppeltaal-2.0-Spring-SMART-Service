@@ -157,7 +157,7 @@ public class AuditEventFhirClientService extends BaseFhirClientCrudService<Audit
 		auditEvent.setEntity(Collections.singletonList(entity));
 
 		auditEvent.addExtension("http://koppeltaal.nl/fhir/StructureDefinition/trace-id", new IdType(traceContext.getTraceId()));
-		auditEvent.addExtension("http://koppeltaal.nl/fhir/StructureDefinition/parent-id", new IdType(traceContext.getSpanId()));
+		auditEvent.addExtension("http://koppeltaal.nl/fhir/StructureDefinition/request-id", new IdType(traceContext.getSpanId()));
 		auditEvent.addExtension("http://koppeltaal.nl/fhir/StructureDefinition/correlation-id", new IdType(traceContext.getParentSpanId()));
 
 		return storeResource(auditEvent);
