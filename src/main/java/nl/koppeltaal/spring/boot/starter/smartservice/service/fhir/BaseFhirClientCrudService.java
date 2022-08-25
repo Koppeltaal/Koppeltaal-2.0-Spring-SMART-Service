@@ -77,9 +77,15 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 		}
 	}
 
+	public <E extends IClientExecutable<?, O>, O extends IBaseResource> O execute(E type) {
+		return execute(type, null);
+	}
 	public <E extends IClientExecutable<?, O>, O extends IBaseResource> O execute(E type, @Nullable TraceContext traceContext) {
 		setTracingHeaders(type, traceContext);
 		return type.execute();
+	}
+	public <E extends IClientExecutable<?, O>, O extends MethodOutcome> O executeMethod(E type, @Nullable R previous) {
+		return executeMethod(type, null, previous);
 	}
 
 	public <E extends IClientExecutable<?, O>, O extends MethodOutcome> O executeMethod(E type, @Nullable TraceContext traceContext, @Nullable R previous) {
@@ -113,9 +119,17 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 				.withAdditionalHeader("X-B3-Sampled", "1");
 	}
 
+	public R getResourceByIdentifier(Identifier identifier) {
+		return getResourceByIdentifier(identifier, null);
+	}
+
 	public R getResourceByIdentifier(Identifier identifier, @Nullable TraceContext traceContext) {
 		String system = StringUtils.isNotEmpty(identifier.getSystem()) ? identifier.getSystem() : getDefaultSystem();
 		return getResourceByIdentifier(system, identifier.getValue(), traceContext);
+	}
+
+	public R getResourceByIdentifier(String identifierValue) {
+		return getResourceByIdentifier(identifierValue, (TraceContext) null);
 	}
 
 	public R getResourceByIdentifier(String identifierValue, @Nullable TraceContext traceContext) {
@@ -151,6 +165,10 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 		return getResourcesInternal(sort, null, traceContext);
 	}
 
+	public List<R> getResources() {
+		return getResources((TraceContext) null);
+	}
+
 	public List<R> getResources(@Nullable TraceContext traceContext) {
 		return getResourcesInternal(null, null, traceContext);
 	}
@@ -163,6 +181,9 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 		return getResourcesInternal(null, criterion, traceContext);
 	}
 
+	public List<R> getResources(Map<String, List<IQueryParameterType>> criteria) {
+		return getResources(criteria, null);
+	}
 	public List<R> getResources(Map<String, List<IQueryParameterType>> criteria, @Nullable TraceContext traceContext) {
 		return getResourcesInternal(null, null, criteria, traceContext);
 	}
@@ -243,6 +264,10 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 		} catch (InvocationTargetException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	protected R getResourceByIdentifier(String identifierValue, String identifierSystem) {
+		return getResourceByIdentifier(identifierValue, identifierSystem, null);
 	}
 
 	protected R getResourceByIdentifier(String identifierValue, String identifierSystem, @Nullable TraceContext traceContext) {
