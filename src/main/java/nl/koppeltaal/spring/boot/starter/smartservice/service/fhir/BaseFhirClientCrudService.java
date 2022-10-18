@@ -25,7 +25,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseOperationOutcome;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.*;
-import org.hl7.fhir.r4.model.Enumerations.FHIRAllTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -125,7 +124,7 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 
 	public R getResourceByIdentifier(Identifier identifier, @Nullable TraceContext traceContext) {
 		String system = StringUtils.isNotEmpty(identifier.getSystem()) ? identifier.getSystem() : getDefaultSystem();
-		return getResourceByIdentifier(system, identifier.getValue(), traceContext);
+		return getResourceByIdentifier(identifier.getValue(), system, traceContext);
 	}
 
 	public R getResourceByIdentifier(String identifierValue) {
@@ -201,13 +200,13 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 	}
 
 	public R storeResource(R resource, @Nullable TraceContext traceContext) throws IOException {
-		String identifier = getIdentifier(getDefaultSystem(), resource);
+		String identifierValue = getIdentifierValue(getDefaultSystem(), resource);
 		String id = getId(resource);
 		R res = null;
 		if (StringUtils.isNotEmpty(id)) {
 			res = getResourceByReference(id);
-		} else if (StringUtils.isNotEmpty(identifier)) {
-			res = getResourceByIdentifier(identifier, getDefaultSystem(), traceContext);
+		} else if (StringUtils.isNotEmpty(identifierValue)) {
+			res = getResourceByIdentifier(identifierValue, getDefaultSystem(), traceContext);
 		}
 
 		final R updatedEntity;
@@ -248,7 +247,7 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 		return null;
 	}
 
-	protected final String getIdentifier(String system, R resource) {
+	protected final String getIdentifierValue(String system, R resource) {
 		try {
 			Method getIdentifier = resource.getClass().getDeclaredMethod("getIdentifier");
 			List<Identifier> identifiers = (List<Identifier>) getIdentifier.invoke(resource);
