@@ -180,7 +180,7 @@ public class SmartClientCredentialService {
 		} else {
 			try (InputStream in = response.getEntity().getContent()) {
 				String content = IOUtils.toString(new InputStreamReader(in, Charset.defaultCharset()));
-				LOG.error(String.format("Unexpected response: %s", content));
+				LOG.error(String.format("Unexpected response: %s from URL: %s", content, tokenUrl));
 			}
 			throw new IOException("System error");
 		}
