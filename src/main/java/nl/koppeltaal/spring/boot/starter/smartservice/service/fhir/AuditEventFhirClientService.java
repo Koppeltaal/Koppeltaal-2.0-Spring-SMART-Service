@@ -118,8 +118,11 @@ public class AuditEventFhirClientService extends BaseFhirClientCrudService<Audit
 		auditEvent.setSubtype(Collections.singletonList(subType));
 
 		final AuditEventAgentComponent agent = new AuditEventAgentComponent();
-		//TODO: Add a Config object to populate the agent with more useful data.
 		agent.setRequestor(true);
+		Coding agentTypeCoding = new Coding("http://terminology.hl7.org/CodeSystem/contractsignertypecodes", "SOURCE", "Source");
+		CodeableConcept agentTypeCodeableConcept = new CodeableConcept(agentTypeCoding);
+		agent.setType(agentTypeCodeableConcept);
+		agent.setWho(new Reference(smartServiceConfiguration.getDeviceId()));
 		auditEvent.setAgent(Collections.singletonList(agent));
 
 		return auditEvent;
