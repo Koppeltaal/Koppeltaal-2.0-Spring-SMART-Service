@@ -23,7 +23,7 @@ import org.springframework.util.Assert;
 public class SmartServiceConfiguration {
 	String fhirServerUrl;
 	String clientId;
-	String deviceId;
+	String deviceRef;
 	String scope = "*/read";
 	String metaSourceUuid;
 	boolean auditEventsEnabled = true;
@@ -38,9 +38,9 @@ public class SmartServiceConfiguration {
 	public void validate() {
 		Assert.notNull(fhirServerUrl, "The config property [fhir.smart.service.fhirServerUrl] is required to communicate  with the FHIR Store");
 		Assert.notNull(clientId, "The config property [fhir.smart.service.clientId] is required to communicate with the FHIR Store");
-		Assert.notNull(deviceId, "The config property [fhir.smart.service.deviceId] is required to create AuditEvents");
+		Assert.notNull(deviceRef, "The config property [fhir.smart.service.deviceRef] is required to create AuditEvents");
 		Assert.notNull(metaSourceUuid, "The config property [fhir.smart.service.metaSourceUuid] is required to set a source on entities");
-		Assert.isTrue(deviceId.startsWith("Device/"), "The config property [fhir.smart.service.deviceId] must start with \"Device/\"");
+		Assert.isTrue(deviceRef.startsWith("Device/"), "The config property [fhir.smart.service.deviceRef] must start with \"Device/\"");
 		Assert.isTrue(metaSourceUuid.startsWith("urn:uuid:"), "The config property [fhir.smart.service.metaSourceUuid] must start with \"urn:uuid:\"");
 	}
 
@@ -60,12 +60,12 @@ public class SmartServiceConfiguration {
 		this.clientId = clientId;
 	}
 
-	public String getDeviceId() {
-		return deviceId;
+	public String getDeviceRef() {
+		return deviceRef;
 	}
 
-	public void setDeviceId(String deviceId) {
-		this.deviceId = deviceId;
+	public void setDeviceRef(String deviceRef) {
+		this.deviceRef = deviceRef;
 	}
 
 	public String getScope() {
@@ -105,7 +105,7 @@ public class SmartServiceConfiguration {
 		return "SmartServiceConfiguration{" +
 				"fhirServerUrl='" + fhirServerUrl + '\'' +
 				", clientId='" + clientId + '\'' +
-				", deviceId='" + deviceId + '\'' +
+				", deviceRef='" + deviceRef + '\'' +
 				", scope='" + scope + '\'' +
 				", metaSourceUuid='" + metaSourceUuid + '\'' +
 				", auditEventsEnabled=" + auditEventsEnabled +

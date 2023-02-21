@@ -122,7 +122,7 @@ public class AuditEventFhirClientService extends BaseFhirClientCrudService<Audit
 		Coding agentTypeCoding = new Coding("http://terminology.hl7.org/CodeSystem/contractsignertypecodes", "SOURCE", "Source");
 		CodeableConcept agentTypeCodeableConcept = new CodeableConcept(agentTypeCoding);
 		agent.setType(agentTypeCodeableConcept);
-		agent.setWho(new Reference(smartServiceConfiguration.getDeviceId()));
+		agent.setWho(new Reference(smartServiceConfiguration.getDeviceRef()));
 		auditEvent.setAgent(Collections.singletonList(agent));
 
 		return auditEvent;
