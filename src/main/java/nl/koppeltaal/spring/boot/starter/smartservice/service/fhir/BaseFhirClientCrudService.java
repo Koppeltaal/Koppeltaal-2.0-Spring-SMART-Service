@@ -269,7 +269,7 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 		return getResourceByIdentifier(identifierValue, identifierSystem, null);
 	}
 
-	protected R getResourceByIdentifier(String identifierValue, String identifierSystem, @Nullable TraceContext traceContext) {
+	public R getResourceByIdentifier(String identifierValue, String identifierSystem, @Nullable TraceContext traceContext) {
 		ICriterion<TokenClientParam> criterion = new TokenClientParam("identifier").exactly().systemAndIdentifier(identifierSystem, identifierValue);
 		Bundle bundle = execute(getFhirClient().search().forResource(getResourceName()).where(criterion).returnBundle(Bundle.class), traceContext);
 		if (bundle.getTotal() > 0) {
