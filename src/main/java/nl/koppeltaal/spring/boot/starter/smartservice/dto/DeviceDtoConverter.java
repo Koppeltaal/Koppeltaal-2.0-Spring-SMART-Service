@@ -28,6 +28,7 @@ public class DeviceDtoConverter implements DtoConverter<DeviceDto, Device> {
 
 		final DeviceDeviceNameComponent deviceName = new DeviceDeviceNameComponent();
 		deviceName.setName(deviceDto.getName());
+		deviceName.setType(Device.DeviceNameType.NULL);
 		device.setDeviceName(Collections.singletonList(deviceName));
 		device.setStatus(deviceDto.getStatus());
 	}
@@ -42,7 +43,7 @@ public class DeviceDtoConverter implements DtoConverter<DeviceDto, Device> {
 		}
 
 		deviceDto.setName(device.getDeviceNameFirstRep().getName());
-		deviceDto.setStatus(deviceDto.getStatus());
+		deviceDto.setStatus(device.getStatus());
 	}
 
 	public DeviceDto convert(Device organization) {
