@@ -9,11 +9,16 @@
 package nl.koppeltaal.spring.boot.starter.smartservice.service.fhir;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.model.api.IQueryParameterType;
+import ca.uhn.fhir.rest.param.TokenParam;
 import nl.koppeltaal.spring.boot.starter.smartservice.configuration.SmartServiceConfiguration;
 import nl.koppeltaal.spring.boot.starter.smartservice.dto.CareTeamDto;
 import nl.koppeltaal.spring.boot.starter.smartservice.dto.CareTeamDtoConverter;
 import org.hl7.fhir.r4.model.CareTeam;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -33,6 +38,11 @@ public class CareTeamFhirClientService extends BaseFhirClientCrudService<CareTea
 	@Override
 	protected String getResourceName() {
 		return "CareTeam";
+	}
+
+	@Override
+	protected Map<String, List<IQueryParameterType>> getEndOfLifeExclusion() {
+		return Map.of(CareTeam.SP_STATUS + ":not", List.of(new TokenParam(CareTeam.CareTeamStatus.INACTIVE.toCode())));
 	}
 
 

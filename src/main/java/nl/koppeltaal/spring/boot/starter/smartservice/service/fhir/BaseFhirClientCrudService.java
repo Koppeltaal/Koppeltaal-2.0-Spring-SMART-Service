@@ -14,6 +14,7 @@ import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.SortOrderEnum;
 import ca.uhn.fhir.rest.api.SortSpec;
 import ca.uhn.fhir.rest.gclient.*;
+import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import com.auth0.jwk.JwkException;
 import nl.koppeltaal.spring.boot.starter.smartservice.configuration.SmartServiceConfiguration;
@@ -25,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseOperationOutcome;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.*;
+import org.hl7.fhir.r4.model.codesystems.PublicationStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,10 +35,13 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static nl.koppeltaal.spring.boot.starter.smartservice.constants.FhirConstant.CLASS_TO_PROFILE_MAP;
+import static org.hl7.fhir.r4.model.codesystems.PublicationStatus.RETIRED;
 
 /**
  *
@@ -74,6 +79,36 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 			final IBaseOperationOutcome execute = execute(getFhirClient().delete().resource(resource), traceContext);
 			LOG.info("Deleted entity [{}]", execute.getIdElement());
 		}
+	}
+
+	public R deleteByMarkingAsEndOfLife(String reference) throws IOException {
+		return deleteByMarkingAsEndOfLife(reference, null);
+	}
+
+	public R deleteByMarkingAsEndOfLife(String reference, @Nullable TraceContext traceContext) throws IOException {
+		R resource = getResourceByReference(reference);
+
+		if(resource instanceof ActivityDefinition) {
+			((ActivityDefinition) resource).setStatus(Enumerations.PublicationStatus.RETIRED);
+		} else if(resource instanceof Endpoint) {
+			((Endpoint) resource).setStatus(Endpoint.EndpointStatus.OFF);
+		} else if(resource instanceof Device) {
+			((Device) resource).setStatus(Device.FHIRDeviceStatus.INACTIVE);
+		} else if(resource instanceof Task) {
+			((Task) resource).setStatus(Task.TaskStatus.CANCELLED);
+		} else if(resource instanceof Patient) {
+			((Patient) resource).setActive(false);
+		} else if(resource instanceof Practitioner) {
+			((Practitioner) resource).setActive(false);
+		} else if(resource instanceof CareTeam) {
+			((CareTeam) resource).setStatus(CareTeam.CareTeamStatus.INACTIVE);
+		} else if(resource instanceof Organization) {
+			((Organization) resource).setActive(false);
+		} else if(resource instanceof Subscription) {
+			((Subscription) resource).setStatus(Subscription.SubscriptionStatus.OFF);
+		}
+
+		return storeResource(resource, traceContext);
 	}
 
 	public <E extends IClientExecutable<?, O>, O extends IBaseResource> O execute(E type) {
@@ -168,6 +203,18 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 		return getResources((TraceContext) null);
 	}
 
+	public List<R> getResources(GetResourceBuilder<D, R> resourceBuilder) {
+
+		return getResourcesInternal(
+				resourceBuilder.getSort(),
+				resourceBuilder.getCriterion(),
+				resourceBuilder.getCriteria(),
+				resourceBuilder.getTraceContext(),
+				resourceBuilder.isIncludeEndOfLife()
+		);
+	}
+
+
 	public List<R> getResources(@Nullable TraceContext traceContext) {
 		return getResourcesInternal(null, null, traceContext);
 	}
@@ -184,7 +231,7 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 		return getResources(criteria, null);
 	}
 	public List<R> getResources(Map<String, List<IQueryParameterType>> criteria, @Nullable TraceContext traceContext) {
-		return getResourcesInternal(null, null, criteria, traceContext);
+		return getResourcesInternal(null, null, criteria, traceContext, false);
 	}
 
 	public List<R> getResources(SortSpec sort, ICriterion<?> criterion) {
@@ -280,21 +327,36 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 	}
 
 	protected abstract String getResourceName();
+	/**
+	 * As KT2 works with an end-of-life cycle instead of deletes, crud services can provide their way of excluding
+	 * entities marked as end-of-life. By default, the crud services will exclude end-of-life entities
+	 */
+	protected abstract Map<String, List<IQueryParameterType>> getEndOfLifeExclusion();
 
-	private List<R> getResourcesInternal(SortSpec sort, ICriterion<?> criterion, Map<String, List<IQueryParameterType>> criteria, @Nullable TraceContext traceContext) {
+	private List<R> getResourcesInternal(SortSpec sort, ICriterion<?> criterion, Map<String, List<IQueryParameterType>> criteria, @Nullable TraceContext traceContext, boolean includeEndOfLife) {
 		List<R> rv = new ArrayList<>();
 
 		final IQuery<Bundle> query = getFhirClient().search().forResource(getResourceName()).returnBundle(Bundle.class);
 
-		query.sort(sort != null ? sort : new SortSpec("_id", SortOrderEnum.DESC));
+		if(sort != null) {
+			query.sort(sort);
+		}
 
 		if (criterion != null) {
 			query.where(criterion);
 		}
 
+		Map<String, List<IQueryParameterType>> endOfLifeExclusion = getEndOfLifeExclusion();
 		if (criteria != null) {
 			if (criterion != null) throw new IllegalStateException("Cannot define both a criterion and criteria.");
+
+			if(!includeEndOfLife && endOfLifeExclusion != null) {
+				criteria.putAll(endOfLifeExclusion);
+			}
+
 			query.where(criteria);
+		} else if(!includeEndOfLife && endOfLifeExclusion != null) {
+			query.where(endOfLifeExclusion);
 		}
 
 		//FIXME: The server returns paginated results, this client doesn't support pagination,
@@ -309,7 +371,7 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 	}
 
 	private List<R> getResourcesInternal(SortSpec sort, ICriterion<?> criterion, @Nullable TraceContext traceContext) {
-		return getResourcesInternal(sort, criterion, null, traceContext);
+		return getResourcesInternal(sort, criterion, null, traceContext, false);
 	}
 
 	private void updateMetaElement(R resource) {

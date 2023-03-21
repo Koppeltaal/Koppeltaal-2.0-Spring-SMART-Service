@@ -9,11 +9,16 @@
 package nl.koppeltaal.spring.boot.starter.smartservice.service.fhir;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.model.api.IQueryParameterType;
+import ca.uhn.fhir.rest.param.TokenParam;
 import nl.koppeltaal.spring.boot.starter.smartservice.configuration.SmartServiceConfiguration;
 import nl.koppeltaal.spring.boot.starter.smartservice.dto.OrganizationDto;
 import nl.koppeltaal.spring.boot.starter.smartservice.dto.OrganizationDtoConverter;
 import org.hl7.fhir.r4.model.Organization;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -28,6 +33,11 @@ public class OrganizationFhirClientService extends BaseFhirClientCrudService<Org
 	@Override
 	protected String getResourceName() {
 		return "Organization";
+	}
+
+	@Override
+	protected Map<String, List<IQueryParameterType>> getEndOfLifeExclusion() {
+		return Map.of(Organization.ACTIVE.getParamName(), List.of(new TokenParam("true")));
 	}
 
 	protected String getDefaultSystem() {

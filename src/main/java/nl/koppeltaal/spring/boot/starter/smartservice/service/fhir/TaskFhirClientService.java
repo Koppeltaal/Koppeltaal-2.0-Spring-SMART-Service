@@ -9,15 +9,14 @@
 package nl.koppeltaal.spring.boot.starter.smartservice.service.fhir;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.model.api.IQueryParameterType;
 import ca.uhn.fhir.rest.gclient.ICriterion;
 import ca.uhn.fhir.rest.gclient.ReferenceClientParam;
+import ca.uhn.fhir.rest.param.TokenParam;
 import com.auth0.jwk.JwkException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+
 import nl.koppeltaal.spring.boot.starter.smartservice.configuration.SmartServiceConfiguration;
 import nl.koppeltaal.spring.boot.starter.smartservice.constants.FhirConstant;
 import nl.koppeltaal.spring.boot.starter.smartservice.dto.TaskDto;
@@ -25,16 +24,7 @@ import nl.koppeltaal.spring.boot.starter.smartservice.dto.TaskDtoConverter;
 import nl.koppeltaal.spring.boot.starter.smartservice.utils.ResourceUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IIdType;
-import org.hl7.fhir.r4.model.ActivityDefinition;
-import org.hl7.fhir.r4.model.Bundle;
-import org.hl7.fhir.r4.model.IdType;
-import org.hl7.fhir.r4.model.Identifier;
-import org.hl7.fhir.r4.model.Meta;
-import org.hl7.fhir.r4.model.Patient;
-import org.hl7.fhir.r4.model.Practitioner;
-import org.hl7.fhir.r4.model.Reference;
-import org.hl7.fhir.r4.model.Resource;
-import org.hl7.fhir.r4.model.Task;
+import org.hl7.fhir.r4.model.*;
 import org.springframework.stereotype.Service;
 
 /**
@@ -132,6 +122,11 @@ public class TaskFhirClientService extends BaseFhirClientCrudService<TaskDto, Ta
 	@Override
 	protected String getResourceName() {
 		return "Task";
+	}
+
+	@Override
+	protected Map<String, List<IQueryParameterType>> getEndOfLifeExclusion() {
+		return Map.of(Task.SP_STATUS + ":not", List.of(new TokenParam(Task.TaskStatus.CANCELLED.toCode())));
 	}
 
 	private List<Task> getTasksForOwnerAndDefinition(Patient fhirPatient, ActivityDefinition fhirDefinition) throws IOException, JwkException {

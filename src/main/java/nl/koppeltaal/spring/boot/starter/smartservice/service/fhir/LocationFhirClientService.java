@@ -9,11 +9,15 @@
 package nl.koppeltaal.spring.boot.starter.smartservice.service.fhir;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.model.api.IQueryParameterType;
 import nl.koppeltaal.spring.boot.starter.smartservice.configuration.SmartServiceConfiguration;
 import nl.koppeltaal.spring.boot.starter.smartservice.dto.LocationDto;
 import nl.koppeltaal.spring.boot.starter.smartservice.dto.LocationDtoConverter;
 import org.hl7.fhir.r4.model.Location;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -28,6 +32,11 @@ public class LocationFhirClientService extends BaseFhirClientCrudService<Locatio
 	@Override
 	protected String getResourceName() {
 		return "Location";
+	}
+
+	@Override
+	protected Map<String, List<IQueryParameterType>> getEndOfLifeExclusion() {
+		return null;
 	}
 
 	protected String getDefaultSystem() {

@@ -25,7 +25,9 @@ public class SearchService extends BaseFhirClientService {
   public String rawSearch(String resourceType, String query) throws IOException {
 
     HttpHeaders headers = new HttpHeaders();
-    headers.setBearerAuth(smartClientCredentialService.getAccessToken());
+    if(smartServiceConfiguration.isBearerTokenEnabled()) {
+      headers.setBearerAuth(smartClientCredentialService.getAccessToken());
+    }
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 
     UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(smartServiceConfiguration.getFhirServerUrl() + "/" + resourceType)

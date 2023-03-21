@@ -9,11 +9,16 @@
 package nl.koppeltaal.spring.boot.starter.smartservice.service.fhir;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.model.api.IQueryParameterType;
+import ca.uhn.fhir.rest.param.TokenParam;
 import nl.koppeltaal.spring.boot.starter.smartservice.configuration.SmartServiceConfiguration;
 import nl.koppeltaal.spring.boot.starter.smartservice.dto.SubscriptionDto;
 import nl.koppeltaal.spring.boot.starter.smartservice.dto.SubscriptionDtoConverter;
 import org.hl7.fhir.r4.model.Subscription;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -29,6 +34,12 @@ public class SubscriptionFhirClientService extends BaseFhirClientCrudService<Sub
 	protected String getResourceName() {
 		return "Subscription";
 	}
+
+	@Override
+	protected Map<String, List<IQueryParameterType>> getEndOfLifeExclusion() {
+		return Map.of(Subscription.SP_STATUS + ":not", List.of(new TokenParam(Subscription.SubscriptionStatus.OFF.toCode())));
+	}
+
 	protected String getDefaultSystem() {
 		return "subscription-no-identifier";
 	}

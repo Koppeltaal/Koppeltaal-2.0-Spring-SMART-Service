@@ -1,6 +1,7 @@
 package nl.koppeltaal.spring.boot.starter.smartservice.service.fhir;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.model.api.IQueryParameterType;
 import com.auth0.jwk.JwkException;
 import nl.koppeltaal.spring.boot.starter.smartservice.configuration.SmartServiceConfiguration;
 import nl.koppeltaal.spring.boot.starter.smartservice.dto.AuditEventDto;
@@ -21,6 +22,8 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Service to persist {@link AuditEvent} objects. This service blocks update or delete calls
@@ -144,6 +147,11 @@ public class AuditEventFhirClientService extends BaseFhirClientCrudService<Audit
 	@Override
 	protected String getResourceName() {
 		return FHIRAllTypes.AUDITEVENT.getDisplay();
+	}
+
+	@Override
+	protected Map<String, List<IQueryParameterType>> getEndOfLifeExclusion() {
+		return null; // cannot be marked as deleted
 	}
 
 	private AuditEvent registerRestOperation(IIdType idType, Coding subType, AuditEventAction auditEventAction, TraceContext traceContext) throws IOException {

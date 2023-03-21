@@ -90,12 +90,18 @@ public class OrganizationDtoConverter implements DtoConverter<OrganizationDto, O
 
 		List<ContactPoint> telecoms = organization.getTelecom();
 		for (ContactPoint telecom : telecoms) {
-			if (StringUtils.equals(telecom.getSystem().toCode(), "email")) {
-				if (StringUtils.equals(telecom.getUse().toCode(), "work")) {
+			ContactPoint.ContactPointSystem system = telecom.getSystem();
+			ContactPoint.ContactPointUse use = telecom.getUse();
+
+			if(system == null || use == null) {
+				continue;
+			}
+
+			if (StringUtils.equals(system.toCode(), "email")
+					&& StringUtils.equals(use.toCode(), "work")) {
 					organizationDto.setEmail(telecom.getValue());
-				}
-			} else if (StringUtils.equals(telecom.getSystem().toCode(), "phone")
-					&& StringUtils.equals(telecom.getUse().toCode(), "work")) {
+			} else if (StringUtils.equals(system.toCode(), "phone")
+					&& StringUtils.equals(use.toCode(), "work")) {
 				organizationDto.setPhone(telecom.getValue());
 			}
 		}
