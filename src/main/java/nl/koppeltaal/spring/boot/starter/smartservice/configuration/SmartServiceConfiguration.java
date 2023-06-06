@@ -41,7 +41,6 @@ public class SmartServiceConfiguration {
 		Assert.notNull(deviceRef, "The config property [fhir.smart.service.deviceRef] is required to create AuditEvents");
 		Assert.notNull(metaSourceUuid, "The config property [fhir.smart.service.metaSourceUuid] is required to set a source on entities");
 		Assert.isTrue(deviceRef.startsWith("Device/"), "The config property [fhir.smart.service.deviceRef] must start with \"Device/\"");
-		Assert.isTrue(metaSourceUuid.startsWith("urn:uuid:"), "The config property [fhir.smart.service.metaSourceUuid] must start with \"urn:uuid:\"");
 	}
 
 	public String getFhirServerUrl() {
