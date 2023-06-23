@@ -33,7 +33,7 @@ public class FhirConstant {
 
   public static final String KT2_EXTENSION__CARE_TEAM__OBSERVER = "http://koppeltaal.nl/fhir/StructureDefinition/KT2ObservationTeam";
   public final static String KT2_EXTENSION__ENDPOINT = "http://koppeltaal.nl/fhir/StructureDefinition/KT2EndpointExtension";
-  public final static String KT2_EXTENSION__PUBLISHER_IDENTIFIER = "http://koppeltaal.nl/fhir/StructureDefinition/KT2PublisherIdentifier";
+  public final static String KT2_EXTENSION__PUBLISHER_IDENTIFIER = "http://koppeltaal.nl/fhir/StructureDefinition/KT2PublisherId";
 
 
   public final static String CODING_SYSTEM__SNOMED = "http://snomed.info/sct";
