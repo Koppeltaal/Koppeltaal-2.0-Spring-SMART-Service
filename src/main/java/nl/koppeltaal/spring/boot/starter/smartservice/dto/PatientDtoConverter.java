@@ -78,11 +78,13 @@ public class PatientDtoConverter extends PersonDtoConverter implements DtoConver
 		patientDto.setActive(patient.getActive());
 		List<ContactPoint> telecoms = patient.getTelecom();
 		for (ContactPoint telecom : telecoms) {
-			if (StringUtils.equals(telecom.getSystem().toCode(), "email")) {
-				if (StringUtils.equals(telecom.getUse().toCode(), "home")) {
+			ContactPoint.ContactPointUse use = telecom.getUse();
+			ContactPoint.ContactPointSystem system = telecom.getSystem();
+			if (system != null && use != null && StringUtils.equals(system.toCode(), "email")) {
+				if (StringUtils.equals(use.toCode(), "home")) {
 					patientDto.setHomeEmail(telecom.getValue());
 				}
-				if (StringUtils.equals(telecom.getUse().toCode(), "work")) {
+				if (StringUtils.equals(use.toCode(), "work")) {
 					patientDto.setWorkEmail(telecom.getValue());
 				}
 			}

@@ -108,13 +108,16 @@ public class RelatedPersonDtoConverter extends PersonDtoConverter implements Dto
 		relatedPersonDto.setActive(relatedPerson.getActive());
 		List<ContactPoint> telecoms = relatedPerson.getTelecom();
 		for (ContactPoint telecom : telecoms) {
-			if (StringUtils.equals(telecom.getSystem().toCode(), "email")
-					&& StringUtils.equals(telecom.getUse().toCode(), "work")) {
-				relatedPersonDto.setEmail(telecom.getValue());
-			}
-			if (StringUtils.equals(telecom.getSystem().toCode(), "phone")
-					&& StringUtils.equals(telecom.getUse().toCode(), "work")) {
-				relatedPersonDto.setPhone(telecom.getValue());
+			ContactPoint.ContactPointUse use = telecom.getUse();
+			ContactPoint.ContactPointSystem system = telecom.getSystem();
+
+			if(use != null && system != null) {
+				if (StringUtils.equals(system.toCode(), "email") && StringUtils.equals(use.toCode(), "work")) {
+					relatedPersonDto.setEmail(telecom.getValue());
+				}
+				if (StringUtils.equals(system.toCode(), "phone") && StringUtils.equals(use.toCode(), "work")) {
+					relatedPersonDto.setPhone(telecom.getValue());
+				}
 			}
 		}
 
