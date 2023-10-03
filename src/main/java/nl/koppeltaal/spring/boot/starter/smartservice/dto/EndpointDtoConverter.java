@@ -47,7 +47,10 @@ public class EndpointDtoConverter implements DtoConverter<EndpointDto, Endpoint>
 		endpointDto.setReference(getRelativeReference(endpoint.getIdElement()));
 		endpointDto.setAddress(endpoint.getAddress());
 		endpointDto.setName(endpoint.getName());
-		endpointDto.setStatus(endpoint.getStatus().toCode());
+		Endpoint.EndpointStatus status = endpoint.getStatus();
+		if(status != null) {
+			endpointDto.setStatus(status.toCode());
+		}
 		endpointDto.setConnectionType(codingConverter.convert(endpoint.getConnectionType()));
 		endpointDto.setPayloadType(codeableConceptConverter.convert(endpoint.getPayloadType()));
 	}
