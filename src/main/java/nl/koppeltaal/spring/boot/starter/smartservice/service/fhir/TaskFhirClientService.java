@@ -61,7 +61,9 @@ public class TaskFhirClientService extends BaseFhirClientCrudService<TaskDto, Ta
 			}
 			task.addIdentifier(taskIdentifier);
 
-			task.setOwner(buildReference(patient));
+			Reference patientReference = buildReference(patient);
+			task.setFor(patientReference);
+			task.setOwner(patientReference);
 			if (practitioner != null) {
 				task.setRequester(buildReference(practitioner));
 			}
