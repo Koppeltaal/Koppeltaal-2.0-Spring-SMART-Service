@@ -169,6 +169,13 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 	public R getResourceByIdentifier(String identifierValue, @Nullable TraceContext traceContext) {
 		return getResourceByIdentifier(identifierValue, getDefaultSystem(), traceContext);
 	}
+	public R getResourceByUrl(String url) {
+		return getResourceByUrl(url, null);
+	}
+
+	public R getResourceByUrl(String url, @Nullable TraceContext traceContext) {
+		return (R) execute(getFhirClient().read().resource(getResourceName()).withUrl(url), traceContext);
+	}
 
 	public R getResourceByReference(String reference) {
 		return getResourceByReference(reference, null);
