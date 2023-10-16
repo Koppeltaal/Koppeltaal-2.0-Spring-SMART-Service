@@ -11,10 +11,12 @@ package nl.koppeltaal.spring.boot.starter.smartservice.service.fhir;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.api.IQueryParameterType;
 import ca.uhn.fhir.rest.api.MethodOutcome;
-import ca.uhn.fhir.rest.api.SortOrderEnum;
 import ca.uhn.fhir.rest.api.SortSpec;
-import ca.uhn.fhir.rest.gclient.*;
-import ca.uhn.fhir.rest.param.TokenParam;
+import ca.uhn.fhir.rest.gclient.IClientExecutable;
+import ca.uhn.fhir.rest.gclient.ICriterion;
+import ca.uhn.fhir.rest.gclient.IQuery;
+import ca.uhn.fhir.rest.gclient.TokenClientParam;
+import ca.uhn.fhir.rest.param.UriParam;
 import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import com.auth0.jwk.JwkException;
 import nl.koppeltaal.spring.boot.starter.smartservice.configuration.SmartServiceConfiguration;
@@ -26,7 +28,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IBaseOperationOutcome;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.*;
-import org.hl7.fhir.r4.model.codesystems.PublicationStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,14 +35,9 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.*;
 
 import static nl.koppeltaal.spring.boot.starter.smartservice.constants.FhirConstant.CLASS_TO_PROFILE_MAP;
-import static org.hl7.fhir.r4.model.codesystems.PublicationStatus.RETIRED;
 
 /**
  *
@@ -169,12 +165,36 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 	public R getResourceByIdentifier(String identifierValue, @Nullable TraceContext traceContext) {
 		return getResourceByIdentifier(identifierValue, getDefaultSystem(), traceContext);
 	}
+
+	/**
+	 * @see #getResourceByUrl(String, TraceContext)
+	 */
 	public R getResourceByUrl(String url) {
 		return getResourceByUrl(url, null);
 	}
 
+	/**
+	 * Certain resources have a url property, and this can be used by Canonical References.
+	 * Added a service function to retrieve resources based on this attribute. It has to be
+	 * globally unique, so the function returns 1 instance. Logs a warning if it finds more
+	 * and returns the first in the list.
+	 *
+	 * @param url The value of the URL it needs to find
+	 * @param traceContext A {@link TraceContext}
+	 * @return null if not found, otherwise the first resource it found
+	 */
 	public R getResourceByUrl(String url, @Nullable TraceContext traceContext) {
-		return (R) execute(getFhirClient().read().resource(getResourceName()).withUrl(url), traceContext);
+		final Map<String, List<IQueryParameterType>> criteria = new HashMap<>();
+		criteria.put("url", Collections.singletonList(new UriParam(url)));
+
+		List<R> resourcesInternal = getResourcesInternal(null, null, criteria, traceContext, false);
+
+		if(resourcesInternal.isEmpty()) return null;
+
+		if(resourcesInternal.size() > 1) {
+			LOG.warn("Found multiple resources with url value {}, returning first in list @ getResourceByUrl(url).", url);
+		}
+		return resourcesInternal.get(0);
 	}
 
 	public R getResourceByReference(String reference) {
