@@ -52,7 +52,7 @@ public class ActivityDefinitionDtoConverter implements DtoConverter<ActivityDefi
 
 	public void applyResource(ActivityDefinitionDto activityDefinitionDto, ActivityDefinition activityDefinition) {
 
-		activityDefinitionDto.setReference(getRelativeReference(activityDefinition.getIdElement()));
+		activityDefinitionDto.setReference(activityDefinition.getUrl());
 
 		List<Identifier> identifiers = activityDefinition.getIdentifier();
 		for (Identifier identifier : identifiers) {
