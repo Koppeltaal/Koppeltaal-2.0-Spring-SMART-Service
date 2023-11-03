@@ -21,6 +21,7 @@ import nl.koppeltaal.spring.boot.starter.smartservice.configuration.SmartService
 import nl.koppeltaal.spring.boot.starter.smartservice.constants.FhirConstant;
 import nl.koppeltaal.spring.boot.starter.smartservice.dto.TaskDto;
 import nl.koppeltaal.spring.boot.starter.smartservice.dto.TaskDtoConverter;
+import nl.koppeltaal.spring.boot.starter.smartservice.utils.ExtensionUtils;
 import nl.koppeltaal.spring.boot.starter.smartservice.utils.ResourceUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.instance.model.api.IIdType;
@@ -134,9 +135,13 @@ public class TaskFhirClientService extends BaseFhirClientCrudService<TaskDto, Ta
 		List<Task> rv = new ArrayList<>();
 		List<Task> resourcesByOwner = getResourcesByOwner(ResourceUtils.getReference(fhirPatient));
 		for (Task task : resourcesByOwner) {
-			if (StringUtils.equals(task.getInstantiatesCanonical(), ResourceUtils.getCanonicalReference(fhirDefinition))) {
-				rv.add(task);
-			}
+
+			ExtensionUtils.getReferenceValue(task, FhirConstant.KT2_EXTENSION__TASK__INSTANTIATES)
+					.ifPresent(instantiates -> {
+						if (StringUtils.equals(instantiates, ResourceUtils.getReference(fhirDefinition))) {
+							rv.add(task);
+						}
+					});
 		}
 		return rv;
 	}

@@ -32,6 +32,7 @@ public class FhirConstant {
   }};
 
   public static final String KT2_EXTENSION__CARE_TEAM__OBSERVER = "http://koppeltaal.nl/fhir/StructureDefinition/KT2ObservationTeam";
+  public static final String KT2_EXTENSION__TASK__INSTANTIATES = "http://vzvz.nl/fhir/StructureDefinition/instantiates";
   public final static String KT2_EXTENSION__ENDPOINT = "http://koppeltaal.nl/fhir/StructureDefinition/KT2EndpointExtension";
   public final static String KT2_EXTENSION__PUBLISHER_IDENTIFIER = "http://koppeltaal.nl/fhir/StructureDefinition/KT2PublisherId";
 
