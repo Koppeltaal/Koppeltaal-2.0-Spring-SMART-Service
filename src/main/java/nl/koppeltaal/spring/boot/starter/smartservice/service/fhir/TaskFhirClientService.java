@@ -71,7 +71,7 @@ public class TaskFhirClientService extends BaseFhirClientCrudService<TaskDto, Ta
 			task.setStatus(Task.TaskStatus.READY);
 			task.setIntent(Task.TaskIntent.ORDER);
 			task.getExecutionPeriod().setStart(new Date());
-			task.setInstantiatesCanonical(activityDefinition.getUrl());
+			task.addExtension(ExtensionUtils.getInstantiatesExtension(ResourceUtils.getReference(activityDefinition)));
 			task = storeResource(task);
 		} else {
 			task = tasks.get(0);

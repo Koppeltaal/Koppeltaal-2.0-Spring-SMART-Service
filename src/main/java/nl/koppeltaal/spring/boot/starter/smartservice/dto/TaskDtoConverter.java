@@ -32,7 +32,7 @@ public class TaskDtoConverter implements DtoConverter<TaskDto, Task> {
 				Collections.singletonList(createIdentifier(taskDto.getIdentifierSystem(), taskDto.getIdentifierValue())));
 		task.setRequester(new Reference(taskDto.getPractitioner()));
 		task.setOwner(new Reference(taskDto.getPatient()));
-		addInstantiatesExtension(task, taskDto.getActivityDefinition());
+		task.addExtension(ExtensionUtils.getInstantiatesExtension(taskDto.getActivityDefinition()));
 		task.setStatus(Task.TaskStatus.fromCode(taskDto.getStatus()));
 
 		// remove all "old" observer values
@@ -57,18 +57,6 @@ public class TaskDtoConverter implements DtoConverter<TaskDto, Task> {
 		observerExtension.setUrl(KT2_EXTENSION__CARE_TEAM__OBSERVER);
 
 		task.addExtension(observerExtension);
-	}
-
-	public static void addInstantiatesExtension(Task task, String activityDefinitionReference) {
-		final Reference instantiatesReference = new Reference();
-		instantiatesReference.setReference(activityDefinitionReference);
-		instantiatesReference.setType(ResourceType.ActivityDefinition.name());
-
-		final Extension instantiatesExtension = new Extension();
-		instantiatesExtension.setValue(instantiatesReference);
-		instantiatesExtension.setUrl(KT2_EXTENSION__TASK__INSTANTIATES);
-
-		task.addExtension(instantiatesExtension);
 	}
 
 	public void applyResource(TaskDto taskDto, Task task) {
