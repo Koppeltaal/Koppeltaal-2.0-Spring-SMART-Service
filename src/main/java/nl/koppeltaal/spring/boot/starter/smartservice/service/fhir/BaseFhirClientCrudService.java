@@ -31,7 +31,7 @@ import org.hl7.fhir.r4.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -59,10 +59,10 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 	}
 
 	public void deleteResource(String id, @Nullable TraceContext traceContext) {
-		final IBaseOperationOutcome execute = execute(getFhirClient().delete()
-				.resourceById(getResourceName(), id), traceContext);
+		final MethodOutcome execute = executeMethod(getFhirClient().delete()
+				.resourceById(getResourceName(), id), traceContext, null);
 
-		LOG.info("Deleted entity [{}]", execute.getIdElement());
+		LOG.info("Deleted entity [{}]", execute.getId());
 	}
 
 	public void deleteResourceByReference(String id) throws IOException, JwkException {
@@ -72,8 +72,8 @@ public abstract class BaseFhirClientCrudService<D extends BaseDto, R extends Dom
 	public void deleteResourceByReference(String id, @Nullable TraceContext traceContext) {
 		R resource = getResourceByReference(id);
 		if (resource != null) {
-			final IBaseOperationOutcome execute = execute(getFhirClient().delete().resource(resource), traceContext);
-			LOG.info("Deleted entity [{}]", execute.getIdElement());
+			final MethodOutcome execute = executeMethod(getFhirClient().delete().resource(resource), traceContext, resource);
+			LOG.info("Deleted entity [{}]", execute.getId());
 		}
 	}
 

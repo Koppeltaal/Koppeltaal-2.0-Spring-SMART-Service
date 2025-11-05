@@ -3,7 +3,7 @@ package nl.koppeltaal.spring.boot.starter.smartservice.event;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
-import javax.annotation.PreDestroy;
+import jakarta.annotation.PreDestroy;
 import nl.koppeltaal.spring.boot.starter.smartservice.configuration.SmartServiceConfiguration;
 import nl.koppeltaal.spring.boot.starter.smartservice.service.fhir.AuditEventFhirClientService;
 import org.slf4j.Logger;

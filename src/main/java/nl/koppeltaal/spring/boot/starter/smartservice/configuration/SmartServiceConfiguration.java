@@ -9,7 +9,7 @@
 package nl.koppeltaal.spring.boot.starter.smartservice.configuration;
 
 import ca.uhn.fhir.context.FhirContext;
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import nl.koppeltaal.springbootstarterjwks.config.JwksConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.properties.ConfigurationProperties;

@@ -1,6 +1,6 @@
 package nl.koppeltaal.spring.boot.starter.smartservice.service.context;
 
-import javax.servlet.ServletRequest;
+import jakarta.servlet.ServletRequest;
 
 /**
  *

@@ -6,19 +6,17 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.5.14</version>
+    <version>3.2.5</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>nl.koppeltaal</groupId>
   <artifactId>spring-boot-starter-smart-service</artifactId>
-  <version>1.1.59-SNAPSHOT</version>
+  <version>2.0.0-SNAPSHOT</version>
   <name>Koppeltaal-2.0-Spring-SMART-Service</name>
-  <description>spring-boot-starter-smart-service project to connect to a FHIR Store that works according to
-  the SMART Backend Service flow (https://hl7.org/fhir/uv/bulkdata/authorization/index.html)</description>
+  <description>Spring Boot 3 compatible SMART Backend Service starter to connect to a FHIR Store (https://hl7.org/fhir/uv/bulkdata/authorization/index.html)</description>
   <properties>
-    <java.version>11</java.version>
-    <hapi-fhir.version>4.2.0</hapi-fhir.version>
-    <jackson.version>2.12.3</jackson.version>
+    <java.version>17</java.version>
+    <hapi-fhir.version>6.10.5</hapi-fhir.version>
   </properties>
   <dependencies>
     <dependency>
@@ -29,7 +27,7 @@
     <dependency>
       <groupId>nl.koppeltaal</groupId>
       <artifactId>spring-boot-starter-jwks</artifactId>
-      <version>1.0.2-SNAPSHOT</version>
+      <version>2.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>ca.uhn.hapi.fhir</groupId>
@@ -42,29 +40,23 @@
       <version>${hapi-fhir.version}</version>
     </dependency>
     <dependency>
-      <groupId>ca.uhn.hapi.fhir</groupId>
-      <artifactId>org.hl7.fhir.r4</artifactId>
-      <version>${hapi-fhir.version}</version>
-    </dependency>
-    <dependency>
       <groupId>com.auth0</groupId>
       <artifactId>java-jwt</artifactId>
-      <version>3.16.0</version>
+      <version>4.4.0</version>
     </dependency>
     <dependency>
       <groupId>com.auth0</groupId>
       <artifactId>jwks-rsa</artifactId>
-      <version>0.18.0</version>
+      <version>0.22.1</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
-      <version>3.12.0</version>
+      <version>3.14.0</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>${jackson.version}</version>
     </dependency>
 
     <dependency>
@@ -99,6 +91,14 @@
     </repository>
   </distributionManagement>
   <repositories>
+    <repository>
+      <id>central</id>
+      <name>Maven Central</name>
+      <url>https://repo1.maven.org/maven2</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
     <repository>
       <id>github</id>
       <name>GitHub Koppeltaal Apache Maven Packages</name>

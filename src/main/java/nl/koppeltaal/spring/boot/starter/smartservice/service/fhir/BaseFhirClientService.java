@@ -8,7 +8,7 @@ import nl.koppeltaal.spring.boot.starter.smartservice.service.context.TraceConte
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.io.IOException;
 
 public abstract class BaseFhirClientService {
