@@ -28,10 +28,15 @@ public class SmartServiceConfiguration {
 	String metaSourceUuid;
 	boolean auditEventsEnabled = true;
 	boolean bearerTokenEnabled = true;
+	int socketTimeout = 20000;
+	int connectTimeout = 20000;
 
 	@Bean
 	public FhirContext fhirContext() {
-		return FhirContext.forR4();
+		FhirContext fhirContext = FhirContext.forR4();
+		fhirContext.getRestfulClientFactory().setSocketTimeout(socketTimeout);
+		fhirContext.getRestfulClientFactory().setConnectTimeout(connectTimeout);
+		return fhirContext;
 	}
 
 	@PostConstruct
@@ -99,6 +104,22 @@ public class SmartServiceConfiguration {
 		this.bearerTokenEnabled = bearerTokenEnabled;
 	}
 
+	public int getSocketTimeout() {
+		return socketTimeout;
+	}
+
+	public void setSocketTimeout(int socketTimeout) {
+		this.socketTimeout = socketTimeout;
+	}
+
+	public int getConnectTimeout() {
+		return connectTimeout;
+	}
+
+	public void setConnectTimeout(int connectTimeout) {
+		this.connectTimeout = connectTimeout;
+	}
+
 	@Override
 	public String toString() {
 		return "SmartServiceConfiguration{" +
@@ -109,6 +130,8 @@ public class SmartServiceConfiguration {
 				", metaSourceUuid='" + metaSourceUuid + '\'' +
 				", auditEventsEnabled=" + auditEventsEnabled +
 				", bearerTokenEnabled=" + bearerTokenEnabled +
+				", socketTimeout=" + socketTimeout +
+				", connectTimeout=" + connectTimeout +
 				'}';
 	}
 
